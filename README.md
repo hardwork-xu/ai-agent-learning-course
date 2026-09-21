@@ -1,4 +1,6 @@
-# Agent 从入门到精通
+# AI Agent Learning Course · AI 智能体工程入门课程
+
+Previously `agent-from-zero-to-production`. Package and command names remain unchanged (`agentlab`). 仓库原名 `agent-from-zero-to-production`，包名及现有命令保持不变。
 
 **面向计算机专业学生的 Agent 工程学习路线：讲清原理，写出系统，用实验支撑面试回答。**
 
