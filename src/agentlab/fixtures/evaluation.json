@@ -1,0 +1,14 @@
+[
+  {"id":"q01","split":"dev","tenant":"campus","query":"refund review window","relevant_ids":["refund-policy"]},
+  {"id":"q02","split":"dev","tenant":"campus","query":"password reset link","relevant_ids":["password-reset"]},
+  {"id":"q03","split":"dev","tenant":"campus","query":"ticket priority P1","relevant_ids":["ticket-priority"]},
+  {"id":"q04","split":"dev","tenant":"campus","query":"refund cryptocurrency exchange rate","relevant_ids":[]},
+  {"id":"q05","split":"test","tenant":"campus","query":"ticket data retention","relevant_ids":["retention"]},
+  {"id":"q06","split":"test","tenant":"campus","query":"attachment upload limit","relevant_ids":["uploads"]},
+  {"id":"q07","split":"test","tenant":"campus","query":"refund request reviewer approval","relevant_ids":["refund-policy"]},
+  {"id":"q08","split":"test","tenant":"campus","query":"password reset expiry seconds","relevant_ids":["password-reset"]},
+  {"id":"q09","split":"test","tenant":"campus","query":"refund lunar mining insurance","relevant_ids":[]},
+  {"id":"q10","split":"test","tenant":"campus","query":"ticket quantum teleportation protocol","relevant_ids":[]},
+  {"id":"q11","split":"test","tenant":"campus","query":"cafeteria opening schedule","relevant_ids":[]},
+  {"id":"q12","split":"test","tenant":"unknown-campus","query":"refund review window","relevant_ids":[]}
+]

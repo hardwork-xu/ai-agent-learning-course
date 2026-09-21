@@ -1,0 +1,21 @@
+name: 内容问题或改进
+description: 报告概念、代码、练习或链接问题
+body:
+  - type: input
+    id: location
+    attributes:
+      label: 对应章节或文件
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题与复现
+      description: 说明期望与实际结果。仅使用合成样例，不要粘贴私人信息或密钥。
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 参考证据或建议
+      description: 优先链接原始论文、协议和官方文档。

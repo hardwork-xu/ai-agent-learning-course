@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "kind": "offline_synthetic_retrieval_regression",
+  "configuration": {
+    "split": "test",
+    "top_k": 1,
+    "scoring": "unique query token coverage",
+    "tokenizer": "lowercase ASCII alphanumeric set, fixed stopwords",
+    "tenant_filter": "before ranking",
+    "model": null,
+    "fixture_sha256": "d5c1e5b64e6f76706a06dc540666cb0f40b0ed7469c201a694a0f81e2a75b874"
+  },
+  "limitations": [
+    "12 hand-authored examples, 8 in the visible test split; not a hidden benchmark.",
+    "Threshold 0.6 is a teaching choice, not the result of a model comparison.",
+    "Citations are checked by document ID; this does not measure claim-level faithfulness.",
+    "No LLM runs, semantic similarity, latency measurement, or production reliability claim."
+  ],
+  "baseline": {
+    "threshold": 0.0,
+    "metrics": {
+      "top1_hit_rate_answerable": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "abstention_recall_unanswerable": {
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5
+      },
+      "citation_precision_answered": {
+        "numerator": 4,
+        "denominator": 6,
+        "value": 0.6666666666666666
+      },
+      "decision_accuracy": {
+        "numerator": 6,
+        "denominator": 8,
+        "value": 0.75
+      },
+      "answer_coverage": {
+        "numerator": 6,
+        "denominator": 8,
+        "value": 0.75
+      }
+    },
+    "cases": [
+      {
+        "id": "q05",
+        "answerable": true,
+        "expected_ids": [
+          "retention"
+        ],
+        "returned_ids": [
+          "retention"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q06",
+        "answerable": true,
+        "expected_ids": [
+          "uploads"
+        ],
+        "returned_ids": [
+          "uploads"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q07",
+        "answerable": true,
+        "expected_ids": [
+          "refund-policy"
+        ],
+        "returned_ids": [
+          "refund-policy"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q08",
+        "answerable": true,
+        "expected_ids": [
+          "password-reset"
+        ],
+        "returned_ids": [
+          "password-reset"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q09",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [
+          "refund-policy"
+        ],
+        "abstained": false,
+        "top1_relevant": false,
+        "correct_decision": false
+      },
+      {
+        "id": "q10",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [
+          "retention"
+        ],
+        "abstained": false,
+        "top1_relevant": false,
+        "correct_decision": false
+      },
+      {
+        "id": "q11",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      },
+      {
+        "id": "q12",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      }
+    ]
+  },
+  "candidate": {
+    "threshold": 0.6,
+    "metrics": {
+      "top1_hit_rate_answerable": {
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75
+      },
+      "abstention_recall_unanswerable": {
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0
+      },
+      "citation_precision_answered": {
+        "numerator": 3,
+        "denominator": 3,
+        "value": 1.0
+      },
+      "decision_accuracy": {
+        "numerator": 7,
+        "denominator": 8,
+        "value": 0.875
+      },
+      "answer_coverage": {
+        "numerator": 3,
+        "denominator": 8,
+        "value": 0.375
+      }
+    },
+    "cases": [
+      {
+        "id": "q05",
+        "answerable": true,
+        "expected_ids": [
+          "retention"
+        ],
+        "returned_ids": [
+          "retention"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q06",
+        "answerable": true,
+        "expected_ids": [
+          "uploads"
+        ],
+        "returned_ids": [
+          "uploads"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q07",
+        "answerable": true,
+        "expected_ids": [
+          "refund-policy"
+        ],
+        "returned_ids": [
+          "refund-policy"
+        ],
+        "abstained": false,
+        "top1_relevant": true,
+        "correct_decision": true
+      },
+      {
+        "id": "q08",
+        "answerable": true,
+        "expected_ids": [
+          "password-reset"
+        ],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": false
+      },
+      {
+        "id": "q09",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      },
+      {
+        "id": "q10",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      },
+      {
+        "id": "q11",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      },
+      {
+        "id": "q12",
+        "answerable": false,
+        "expected_ids": [],
+        "returned_ids": [],
+        "abstained": true,
+        "top1_relevant": false,
+        "correct_decision": true
+      }
+    ]
+  }
+}
