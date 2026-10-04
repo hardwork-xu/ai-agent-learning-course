@@ -32,6 +32,11 @@ def canonical_payload(payload: dict) -> tuple[str, str]:
     for key, limit in (("subject", 120), ("body", 2000)):
         if not isinstance(payload[key], str) or not 1 <= len(payload[key]) <= limit:
             raise WorkflowError("invalid_payload")
+        try:
+            payload[key].encode("utf-8")
+        except UnicodeEncodeError:
+            # JSON may decode an escaped lone surrogate; reject before persisting it.
+            raise WorkflowError("invalid_payload") from None
     if payload["priority"] not in ("P1", "P2", "P3"):
         raise WorkflowError("invalid_priority")
     encoded = json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
@@ -39,8 +44,9 @@ def canonical_payload(payload: dict) -> tuple[str, str]:
 
 
 class TicketWorkflow:
-    def __init__(self, database: str | Path, *, clock: Callable[[], float] = time.time):
+    def __init__(self, database: str | Path, *, clock: Callable[[], float] = time.time, outbox: bool = False):
         self.clock = clock
+        self.outbox = outbox
         self.db = sqlite3.connect(str(database), isolation_level=None, timeout=5)
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA foreign_keys = ON")
@@ -63,6 +69,14 @@ class TicketWorkflow:
                 PRIMARY KEY (tenant, idempotency_key)
             );
         """)
+        columns = {row[1] for row in self.db.execute("PRAGMA table_info(requests)")}
+        if "creator" not in columns:
+            self.db.execute("ALTER TABLE requests ADD COLUMN creator TEXT")
+        if outbox:
+            self.db.execute("""CREATE TABLE IF NOT EXISTS outbox (
+                event_id TEXT PRIMARY KEY, tenant TEXT NOT NULL, request_id TEXT NOT NULL,
+                payload TEXT NOT NULL, digest TEXT NOT NULL, state TEXT NOT NULL DEFAULT 'pending',
+                receipt TEXT, UNIQUE(tenant, request_id))""")
 
     def close(self) -> None:
         self.db.close()
@@ -91,22 +105,26 @@ class TicketWorkflow:
             raise WorkflowError("request_not_found")
         return row
 
-    def create(self, tenant: str, request_id: str, payload: dict) -> dict:
+    def create(self, tenant: str, request_id: str, payload: dict, *, creator: str | None = None) -> dict:
         identifier(tenant)
         identifier(request_id)
+        if creator is not None:
+            identifier(creator)
         encoded, digest = canonical_payload(payload)
         with self.transaction():
             try:
-                self.db.execute("INSERT INTO requests (tenant,id,payload,digest,version,state) VALUES (?,?,?,?,1,'pending')",
-                                (tenant, request_id, encoded, digest))
+                self.db.execute("INSERT INTO requests (tenant,id,payload,digest,version,state,creator) VALUES (?,?,?,?,1,'pending',?)",
+                                (tenant, request_id, encoded, digest, creator))
             except sqlite3.IntegrityError:
                 raise WorkflowError("request_already_exists") from None
         return self.checkpoint(tenant, request_id)
 
-    def amend(self, tenant: str, request_id: str, payload: dict) -> dict:
+    def amend(self, tenant: str, request_id: str, payload: dict, *, expected_version: int | None = None) -> dict:
         encoded, digest = canonical_payload(payload)
         with self.transaction():
             row = self._request(tenant, request_id)
+            if expected_version is not None and (type(expected_version) is not int or row["version"] != expected_version):
+                raise WorkflowError("stale_review")
             if row["state"] == "committed":
                 raise WorkflowError("committed_request_immutable")
             self.db.execute("""UPDATE requests SET payload=?, digest=?, version=version+1, state='pending',
@@ -115,13 +133,19 @@ class TicketWorkflow:
                 (encoded, digest, tenant, request_id))
         return self.checkpoint(tenant, request_id)
 
-    def approve(self, tenant: str, request_id: str, *, reviewer: str, ttl_seconds: int = 300) -> str:
+    def approve(self, tenant: str, request_id: str, *, reviewer: str, ttl_seconds: int = 300,
+                expected_version: int | None = None, expected_digest: str | None = None) -> str:
         """Trusted reviewer action, not a text instruction or a planner decision."""
         identifier(reviewer)
+        if (expected_version is None) != (expected_digest is None):
+            raise WorkflowError("invalid_review_binding")
         if type(ttl_seconds) is not int or not 1 <= ttl_seconds <= 3600:
             raise WorkflowError("invalid_approval_ttl")
         with self.transaction():
             row = self._request(tenant, request_id)
+            if expected_version is not None and (type(expected_version) is not int
+                    or expected_version != row["version"] or expected_digest != row["digest"]):
+                raise WorkflowError("stale_review")
             if row["state"] == "committed":
                 raise WorkflowError("committed_request_immutable")
             token = uuid.uuid4().hex
@@ -130,10 +154,16 @@ class TicketWorkflow:
                 (token, row["digest"], row["version"], self.clock() + ttl_seconds, reviewer, tenant, request_id))
         return token
 
-    def execute(self, tenant: str, request_id: str, *, approval_token: str, idempotency_key: str) -> dict:
+    def execute(self, tenant: str, request_id: str, *, approval_token: str, idempotency_key: str,
+                expected_version: int | None = None, expected_digest: str | None = None) -> dict:
         identifier(idempotency_key)
+        if (expected_version is None) != (expected_digest is None):
+            raise WorkflowError("invalid_review_binding")
         with self.transaction():
             row = self._request(tenant, request_id)
+            if expected_version is not None and (type(expected_version) is not int
+                    or expected_version != row["version"] or expected_digest != row["digest"]):
+                raise WorkflowError("stale_review")
             previous = self.db.execute("SELECT * FROM operations WHERE tenant=? AND idempotency_key=?",
                                        (tenant, idempotency_key)).fetchone()
             if previous:
@@ -156,12 +186,23 @@ class TicketWorkflow:
                             (ticket_id, tenant, request_id, row["payload"]))
             self.db.execute("INSERT INTO operations (tenant,idempotency_key,request_id,digest,result) VALUES (?,?,?,?,?)",
                             (tenant, idempotency_key, request_id, row["digest"], json.dumps(result, sort_keys=True)))
+            if self.outbox:
+                self.db.execute("""INSERT INTO outbox (event_id,tenant,request_id,payload,digest)
+                    VALUES (?,?,?,?,?)""", (ticket_id, tenant, request_id, row["payload"], row["digest"]))
             self.db.execute("UPDATE requests SET state='committed' WHERE tenant=? AND id=?", (tenant, request_id))
         return result
 
     def checkpoint(self, tenant: str, request_id: str) -> dict:
         row = self._request(tenant, request_id)
         return {"state": row["state"], "version": row["version"]}
+
+    def read(self, tenant: str, request_id: str) -> dict:
+        """Application must authenticate and authorize the caller before exposing this."""
+        row = self._request(tenant, request_id)
+        return {"request_id": request_id, "payload": json.loads(row["payload"]),
+                "digest": row["digest"], "version": row["version"], "state": row["state"],
+                "creator": row["creator"], "reviewer": row["reviewer"],
+                "approval_expires": row["approval_expires"]}
 
     def ticket_count(self, tenant: str) -> int:
         identifier(tenant)

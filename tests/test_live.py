@@ -35,14 +35,14 @@ class LiveAdapterTests(unittest.TestCase):
         with patch("agentlab.live.build_opener") as opener:
             opener.return_value.open.return_value = io.BytesIO(json.dumps(response).encode())
             result = Runtime(demo_tools()).run("synthetic", self.planner())
-        self.assertEqual(result.error, "planner_error")
+        self.assertEqual(result.error, "provider_incomplete")
 
     def test_provider_error_is_not_retried_or_logged(self):
         with patch("agentlab.live.build_opener") as opener:
             opener.return_value.open.side_effect = TimeoutError("SYNTHETIC_SECRET_IN_EXCEPTION")
             result = Runtime(demo_tools()).run("synthetic", self.planner())
             self.assertEqual(opener.return_value.open.call_count, 1)
-        self.assertEqual(result.error, "planner_error")
+        self.assertEqual(result.error, "provider_timeout")
         self.assertNotIn("SYNTHETIC_SECRET", json.dumps(result.trace))
 
     def test_redirect_is_rejected_before_credentials_can_be_forwarded(self):
@@ -51,15 +51,47 @@ class LiveAdapterTests(unittest.TestCase):
             NoRedirect().redirect_request(request, None, 302, "Found", {}, "https://example.invalid/")
 
     def test_unexpected_response_schema_fails_closed(self):
-        for response in (
-            {"stop_reason": "end_turn", "content": [{"type": "tool_use", "name": "approve"}]},
-            {"stop_reason": "end_turn", "content": []},
-            {"stop_reason": "end_turn", "content": [{"type": "text", "text": '{"type":"final","answer":"ok","approved":true}'}]},
+        for response, code in (
+            ({"stop_reason": "end_turn", "content": [{"type": "tool_use", "name": "approve"}]}, "provider_schema"),
+            ({"stop_reason": "end_turn", "content": []}, "provider_schema"),
+            ({"stop_reason": "end_turn", "content": [{"type": "text", "text": '{"type":"final","answer":"ok","approved":true}'}]}, "provider_invalid_json"),
         ):
             with self.subTest(response=response), patch("agentlab.live.build_opener") as opener:
                 opener.return_value.open.return_value = io.BytesIO(json.dumps(response).encode())
                 result = Runtime(demo_tools()).run("synthetic", self.planner())
-                self.assertEqual(result.error, "planner_error")
+                self.assertEqual(result.error, code)
+
+    def test_usage_is_preserved_without_error_bodies_or_prompt_data(self):
+        response = {"id": "msg-synthetic", "model": "synthetic-returned", "stop_reason": "end_turn",
+                    "usage": {"input_tokens": 137, "output_tokens": 19, "cache_read_input_tokens": 7},
+                    "content": [{"type": "text", "text": '{"type":"final","answer":"done"}'}]}
+        planner = self.planner()
+        with patch("agentlab.live.build_opener") as opener:
+            opener.return_value.open.return_value = io.BytesIO(json.dumps(response).encode())
+            planner.next("SYNTHETIC_PRIVATE_MARKER", ())
+        record = planner.calls[0]
+        self.assertEqual(record["usage"]["input_tokens"], 137)
+        self.assertEqual(record["usage"]["cache_read_input_tokens"], 7)
+        self.assertIsNone(record["usage"]["cache_creation_input_tokens"])
+        self.assertEqual(record["returned_model"], "synthetic-returned")
+        self.assertGreaterEqual(record["latency_ms"], 0)
+        self.assertIsNone(record["cost"])
+        self.assertNotIn("PRIVATE_MARKER", json.dumps(record))
+        self.assertNotIn("synthetic-test-value", json.dumps(record))
+
+    def test_rate_limit_and_bad_json_are_distinct_safe_failures(self):
+        planner = self.planner()
+        with patch("agentlab.live.build_opener") as opener:
+            opener.return_value.open.side_effect = HTTPError(
+                "https://example.invalid", 429, "SYNTHETIC_SECRET", {}, io.BytesIO(b"private"))
+            result = Runtime(demo_tools()).run("synthetic", planner)
+        self.assertEqual(result.error, "provider_rate_limit")
+        self.assertEqual(planner.calls[0]["status"], "provider_rate_limit")
+        self.assertNotIn("SYNTHETIC_SECRET", json.dumps(planner.calls))
+        with patch("agentlab.live.build_opener") as opener:
+            opener.return_value.open.return_value = io.BytesIO(b"not json")
+            result = Runtime(demo_tools()).run("synthetic", self.planner())
+        self.assertEqual(result.error, "provider_invalid_json")
 
 
 if __name__ == "__main__":

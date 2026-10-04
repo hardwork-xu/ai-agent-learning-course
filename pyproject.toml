@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-learning-lab"
-version = "0.1.0"
-description = "Inspectable, offline-first exercises for tool agents, retrieval and approval workflows"
+version = "0.2.0"
+description = "Agent application engineering course with student grading, Chinese RAG and a durable teaching service"
 requires-python = ">=3.11"
 dependencies = []
 

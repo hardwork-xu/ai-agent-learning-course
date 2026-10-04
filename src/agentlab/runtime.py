@@ -3,12 +3,26 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
 import math
 from typing import Any, Callable, Protocol
 
 
 class BoundaryError(ValueError):
     """A proposal violates the runtime contract."""
+
+
+class PlannerFailure(BoundaryError):
+    """Only these safe categories may cross the provider/runtime boundary."""
+
+    CODES = frozenset({"provider_timeout", "provider_rate_limit", "provider_auth",
+                       "provider_unavailable", "provider_http_error", "provider_transport",
+                       "provider_schema", "provider_response_budget", "provider_input_budget",
+                       "provider_incomplete", "provider_invalid_json"})
+
+    def __init__(self, code: str):
+        self.code = code if code in self.CODES else "planner_error"
+        super().__init__(self.code)
 
 
 @dataclass(frozen=True)
@@ -26,6 +40,8 @@ class Finish:
 class Observation:
     tool: str
     result: str
+    # Immutable snapshot for task assessment; never included in the safe trace.
+    arguments_json: str = ""
 
 
 class Planner(Protocol):
@@ -62,6 +78,9 @@ class RunResult:
     answer: str = ""
     error: str = ""
     trace: list[dict[str, Any]] = field(default_factory=list)
+    # None means not assessed. A terminated loop is not proof of task success.
+    task_success: bool | None = None
+    evaluation: dict[str, Any] = field(default_factory=dict)
 
 
 class Runtime:
@@ -75,7 +94,8 @@ class Runtime:
         self.tools = {tool.name: tool for tool in tools}
         self.max_steps, self.max_retries = max_steps, max_retries
 
-    def run(self, task: str, planner: Planner) -> RunResult:
+    def run(self, task: str, planner: Planner, *,
+            evaluator: Callable[[str, tuple[Observation, ...]], dict[str, bool]] | None = None) -> RunResult:
         if not isinstance(task, str) or len(task) > 4000:
             raise ValueError("task must be a string of at most 4000 characters")
         trace: list[dict[str, Any]] = []
@@ -89,6 +109,8 @@ class Runtime:
             trace.append({"event": "planner_step", "step": step})
             try:
                 decision = planner.next(task, tuple(observations))
+            except PlannerFailure as exc:
+                return fail(exc.code)
             except Exception:
                 # Never print provider errors: they can include headers or prompt data.
                 return fail("planner_error")
@@ -96,7 +118,20 @@ class Runtime:
                 if not isinstance(decision.answer, str) or not 1 <= len(decision.answer) <= 4000:
                     return fail("invalid_answer")
                 trace.append({"event": "finished", "step": step})
-                return RunResult("completed", answer=decision.answer, trace=trace)
+                result = RunResult("completed", answer=decision.answer, trace=trace)
+                if evaluator is not None:
+                    try:
+                        checks = evaluator(decision.answer, tuple(observations))
+                        if (not isinstance(checks, dict) or not checks
+                                or any(not isinstance(k, str) or type(v) is not bool for k, v in checks.items())):
+                            raise ValueError("invalid rubric")
+                        result.task_success = all(checks.values())
+                        result.evaluation = checks
+                    except Exception:
+                        result.task_success = False
+                        result.evaluation = {"evaluator_succeeded": False}
+                    trace.append({"event": "task_assessed", "passed": result.task_success})
+                return result
             if not isinstance(decision, ToolCall) or not isinstance(decision.name, str):
                 return fail("invalid_decision")
             tool = self.tools.get(decision.name)
@@ -108,6 +143,7 @@ class Runtime:
                 if not isinstance(decision.arguments, dict):
                     raise BoundaryError("arguments must be an object")
                 tool.validate(decision.arguments)
+                arguments_json = json.dumps(decision.arguments, sort_keys=True, allow_nan=False)
             except Exception:
                 return fail("invalid_arguments")
             attempts = 1 + (self.max_retries if tool.retry_safe else 0)
@@ -123,7 +159,7 @@ class Runtime:
                     return fail("tool_error")
                 if not isinstance(output, str) or len(output) > 8000:
                     return fail("invalid_tool_output")
-                observations.append(Observation(tool.name, output))
+                observations.append(Observation(tool.name, output, arguments_json))
                 break
         return fail("step_budget_exhausted")
 
