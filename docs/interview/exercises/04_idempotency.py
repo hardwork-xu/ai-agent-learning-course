@@ -5,6 +5,7 @@ import sqlite3
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 from pathlib import Path
 
 
@@ -13,7 +14,8 @@ class Conflict(ValueError):
 
 
 def initialize(path):
-    with sqlite3.connect(path) as db:
+    # A connection's own context manager ends the transaction, not the connection.
+    with closing(sqlite3.connect(path)) as db, db:
         db.executescript("""
         CREATE TABLE IF NOT EXISTS tickets (
             id INTEGER PRIMARY KEY, tenant TEXT NOT NULL, title TEXT NOT NULL);
@@ -64,7 +66,7 @@ class Tests(unittest.TestCase):
         initialize(self.path)
 
     def count(self):
-        with sqlite3.connect(self.path) as db:
+        with closing(sqlite3.connect(self.path)) as db:
             return db.execute("SELECT COUNT(*) FROM tickets").fetchone()[0]
 
     def test_replay_after_new_connection(self):
