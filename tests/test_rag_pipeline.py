@@ -141,6 +141,25 @@ class ChineseRAGTests(unittest.TestCase):
         self.assertEqual(result["reason"], "model_error")
         self.assertEqual(result["usage"]["eval_count"], 19)
 
+    def test_generation_budget_failure_does_not_claim_evidence_is_missing(self):
+        class BudgetFailure:
+            def generate(self, question, evidence):
+                if not evidence:
+                    raise AssertionError("this regression requires retrieved evidence")
+                raise ModelError("output_budget_exceeded",
+                                 usage={"prompt_eval_count": 340, "eval_count": 384})
+
+        result = GroundedRAG("local", generator=BudgetFailure()).answer(QUESTION, tenant="campus")
+        self.assertTrue(result["retrieval"])
+        self.assertIn("生成请求未完成", result["answer"])
+        self.assertNotIn("资料不足", result["answer"])
+        self.assertEqual(result["reason"], "model_error")
+        self.assertEqual(result["verification"]["model_error"], "output_budget_exceeded")
+        self.assertEqual(result["usage"], {"prompt_eval_count": 340, "eval_count": 384})
+        self.assertTrue(result["abstained"])
+        self.assertFalse(result["verification"]["publishable"])
+        self.assertEqual(result["citations"], [])
+
     def test_constructor_and_question_limits(self):
         for kwargs in ({"mode": "remote"}, {"mode": "local"}, {"model": "x"}, {"top_k": 0}, {"min_coverage": 2}):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):

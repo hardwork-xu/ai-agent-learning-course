@@ -31,6 +31,25 @@ python -m agentlab.service serve --config work/service-auth.json --database work
 
 配置里有两个租户 `campus`、`partner`，各有 `requester` 和 `reviewer`。角色名是演示标签。真实系统不能把全部角色凭据交给同一个使用者；这里保存在同一受限文件中，是为了单人练习。
 
+### 可选：调整本地模型预算
+
+默认 `extractive` 模式不调用模型。已经准备好本机 Ollama 与明确的本地模型后，可在启动服务时选择 `local` 模式；以下 `<本地模型名>` 必须替换为实际已安装的模型。此命令不下载模型，也不启动或停止 Ollama。
+
+```bash
+python -m agentlab.service serve --config work/service-auth.json --database work/service.sqlite3 --port 8765 --mode local --model '<本地模型名>' --timeout 60 --max-output-tokens 1024
+python examples/service_client.py --timeout 75 query --question '退款审核期限是多少天？'
+```
+
+服务端 `--timeout` 默认 20 秒，范围为大于 0、至多 120 秒；`--max-output-tokens` 默认 384，范围为 16–2048。输出被截断时可按实际模型和设备调整预算，重新记录参数与结果；扩大预算并不保证回答正确，也不能跳过引用与语义审核。`examples/ask_policy.py` 同样接受这两个参数：
+
+```bash
+python examples/ask_policy.py '退款审核期限是多少天？' --mode local --model '<本地模型名>' --timeout 60 --max-output-tokens 1024
+```
+
+客户端 `--timeout` 默认 30 秒，范围为 1–180 秒，参数放在 `query` 等子命令前。它应大于服务端模型调用预算，并为排队、检索和响应留出余量。模型预算限制模型适配器的等待；客户端参数是 HTTP 等待超时，不是已提交工作的取消保证。不要因客户端超时就自动重新提交：先确认服务状态；业务提交需要沿用原幂等键和参数，并查询原请求，避免把未知结果当作从未执行。
+
+需要人工语义审核的模型改写会作为待审核结果返回，仍不能直接沿证据路径创建工单。参考离线流程可先独立完成，不需要为了演示强行选择模型模式。
+
 ## 3. 提问并把证据变成草稿
 
 ```bash

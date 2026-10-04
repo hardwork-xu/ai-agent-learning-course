@@ -12,7 +12,9 @@ from agentlab.service import load_config
 from agentlab.console import configure_utf8_output
 
 
-def send(url, token, method, path, payload=None):
+def send(url, token, method, path, payload=None, *, timeout=30):
+    if type(timeout) not in (int, float) or not 1 <= timeout <= 180:
+        raise ValueError("http_timeout_must_be_1_to_180_seconds")
     parsed = urlparse(url)
     if parsed.scheme != "http" or parsed.hostname not in {"127.0.0.1", "localhost"} or parsed.path not in {"", "/"}:
         raise ValueError("only_loopback_http_supported")
@@ -22,7 +24,7 @@ def send(url, token, method, path, payload=None):
     request = Request(url.rstrip("/") + path, data=raw, method=method,
                       headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"})
     try:
-        with urlopen(request, timeout=65) as response:
+        with urlopen(request, timeout=timeout) as response:
             return response.status, json.load(response)
     except HTTPError as exc:
         return exc.code, json.load(exc)
@@ -34,6 +36,8 @@ def main():
     parser.add_argument("--config", type=Path, default=Path("work/service-auth.json"))
     parser.add_argument("--url", default="http://127.0.0.1:8765")
     parser.add_argument("--as", dest="principal", default="campus-requester")
+    parser.add_argument("--timeout", type=float, default=30,
+                        help="HTTP wait in seconds, 1..180; keep above the server model budget")
     commands = parser.add_subparsers(dest="command", required=True)
     query = commands.add_parser("query")
     query.add_argument("--question", default="退款审核期限是多少天？")
@@ -74,7 +78,7 @@ def main():
                     body["ttl_seconds"] = args.ttl_seconds
                 else:
                     body["idempotency_key"] = args.idempotency_key
-        status, result = send(args.url, principal["token"], method, path, body)
+        status, result = send(args.url, principal["token"], method, path, body, timeout=args.timeout)
         print(json.dumps({"http_status": status, **result}, ensure_ascii=False, indent=2))
         return 0 if status < 400 else 1
     except Exception:

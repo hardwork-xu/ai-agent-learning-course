@@ -1,0 +1,50 @@
+{
+  "mode": "local",
+  "answer": "资料不足，暂不作答。",
+  "citations": [],
+  "abstained": true,
+  "retrieval": [
+    {
+      "id": "refund-review",
+      "revision": "2026-09",
+      "score": 11.919551,
+      "query_feature_coverage": 0.625
+    },
+    {
+      "id": "refund-arrival",
+      "revision": "2026-09",
+      "score": 6.842759,
+      "query_feature_coverage": 0.5
+    },
+    {
+      "id": "return-window",
+      "revision": "2026-09",
+      "score": 0.938816,
+      "query_feature_coverage": 0.125
+    }
+  ],
+  "verification": {
+    "publishable": false,
+    "citation_integrity": null,
+    "semantic_support": "not_evaluated",
+    "question_relevance": "lexical_gate_only",
+    "model_error": "output_budget_exceeded"
+  },
+  "usage": {
+    "requested_model": "course-qwen3:0.6b-q8_0",
+    "reported_model": "course-qwen3:0.6b-q8_0",
+    "server_version": "0.35.1",
+    "model_digest": "03b681e337f70e7d44ef27719410aa95b5f387a6b533cb6c22a1298dbd223e4f",
+    "max_output_tokens": 384,
+    "timeout_seconds": 20.0,
+    "prompt_eval_count": 340,
+    "eval_count": 384,
+    "prompt_eval_cached_count": 0,
+    "total_duration": 10651274958,
+    "load_duration": 6740571583,
+    "prompt_eval_duration": 274968000,
+    "eval_duration": 3618559000
+  },
+  "latency_ms": 10659.542,
+  "reason": "model_error"
+}

@@ -1,0 +1,70 @@
+{
+  "mode": "local",
+  "answer": "已生成待复核草稿；逐项核对声明与引用后再采用。",
+  "citations": [],
+  "abstained": true,
+  "retrieval": [
+    {
+      "id": "refund-review",
+      "revision": "2026-09",
+      "score": 11.919551,
+      "query_feature_coverage": 0.625
+    },
+    {
+      "id": "refund-arrival",
+      "revision": "2026-09",
+      "score": 6.842759,
+      "query_feature_coverage": 0.5
+    },
+    {
+      "id": "return-window",
+      "revision": "2026-09",
+      "score": 0.938816,
+      "query_feature_coverage": 0.125
+    }
+  ],
+  "verification": {
+    "publishable": false,
+    "citation_integrity": true,
+    "semantic_support": "requires_review",
+    "question_relevance": "lexical_gate_only"
+  },
+  "usage": {
+    "requested_model": "course-qwen3:0.6b-q8_0",
+    "reported_model": "course-qwen3:0.6b-q8_0",
+    "server_version": "0.35.1",
+    "model_digest": "03b681e337f70e7d44ef27719410aa95b5f387a6b533cb6c22a1298dbd223e4f",
+    "max_output_tokens": 2048,
+    "timeout_seconds": 40.0,
+    "prompt_eval_count": 340,
+    "eval_count": 923,
+    "prompt_eval_cached_count": 238,
+    "total_duration": 24020766958,
+    "load_duration": 15603416,
+    "prompt_eval_duration": 195649000,
+    "eval_duration": 23767706000
+  },
+  "latency_ms": 24074.275,
+  "reason": "semantic_review_required",
+  "generated_draft": {
+    "answer": "七个工作日",
+    "claims": [
+      {
+        "citations": [
+          {
+            "id": "refund-review",
+            "quote": "校园商店退款申请的审核期限为七个工作日；审核通过不等于资金已经到账。",
+            "revision": "2026-09"
+          },
+          {
+            "id": "refund-arrival",
+            "quote": "校园商店退款审核通过后，资金通常在两个工作日内原路退回。",
+            "revision": "2026-09"
+          }
+        ],
+        "text": "七个工作日"
+      }
+    ],
+    "needs_human_review": true
+  }
+}

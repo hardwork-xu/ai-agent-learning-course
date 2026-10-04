@@ -222,6 +222,7 @@ class GroundedRAG:
         try:
             generated = self.generator.generate(question, [doc.citation() for doc in selected])
         except ModelError as exc:
+            result["answer"] = "已检索到资料，但生成请求未完成。请检查模型运行状态或生成预算后重试。"
             result["verification"]["model_error"] = exc.code
             result["usage"] = exc.usage
             return finish("model_error")

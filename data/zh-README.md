@@ -50,6 +50,8 @@ python -m agentlab.rag_eval --split test --output work/zh-test.json
 
 `local` 模式还需保留实际模型标签、digest、可获取的服务器版本、token 计数和逐题人工复核。已取得的 token 用量在模型 JSON 损坏或输出截断后仍保留；未知字段保持 `null`。HTTP 替身测试和离线结果不充当真实模型结果。生成草稿里出现的声明也不能自动写进最终答案。
 
+[2026-10-05 本地模型实验](../docs/experiments/local-model-run.md)保存了固定权重的真实 dev 运行与失败报告。独立人工审核和真人试学仍未完成，不能把该运行记录当作这两项证据。
+
 返回[中文 RAG 项目](../docs/projects/04-chinese-rag.md)。
 
 ## 一次已保存的离线结果

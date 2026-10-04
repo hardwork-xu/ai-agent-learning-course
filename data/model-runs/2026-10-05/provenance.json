@@ -1,0 +1,274 @@
+{
+  "measured_on": "2026-10-05",
+  "source_commit": "2083aec392d2030984722c23279497371edff1ba",
+  "runtime": {
+    "release": "v0.35.1",
+    "source": "https://github.com/ollama/ollama/releases/tag/v0.35.1",
+    "archive_sha256": "3137dbf28948ee844e0fb3e584d9b5de6879d73d9f0cb7eff3ad64930601d307",
+    "digest_verified": true
+  },
+  "weights": {
+    "repository": "Qwen/Qwen3-0.6B-GGUF",
+    "commit": "23749fefcc72300e3a2ad315e1317431b06b590a",
+    "file": "Qwen3-0.6B-Q8_0.gguf",
+    "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+    "size": 639446688,
+    "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+    "license": "apache-2.0",
+    "digest_verified": true
+  },
+  "served_model": {
+    "name": "course-qwen3:0.6b-q8_0",
+    "model": "course-qwen3:0.6b-q8_0",
+    "size": 639446821,
+    "digest": "03b681e337f70e7d44ef27719410aa95b5f387a6b533cb6c22a1298dbd223e4f",
+    "details": {
+      "parent_model": "Qwen3-0.6B-Q8_0.gguf",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "596.05M",
+      "quantization_level": "Q8_0",
+      "context_length": 40960,
+      "embedding_length": 1024
+    },
+    "capabilities": [
+      "tools",
+      "thinking",
+      "completion"
+    ]
+  },
+  "execution": {
+    "location": "local loopback",
+    "architecture": "macOS arm64",
+    "cloud_disabled": true,
+    "num_ctx": 4096,
+    "max_loaded_models": 1,
+    "num_parallel": 1,
+    "keep_alive": "2m",
+    "thinking_option": "omitted; runtime/model default",
+    "temperature": 0,
+    "paid_api_calls": 0,
+    "latency_scope": "Observed on one local macOS arm64 run; hardware details omitted, workload not controlled; not a portable performance benchmark",
+    "task_owned_model_service_stopped": true
+  },
+  "setup": {
+    "registry_pull": "failed: runtime refused a redirect resolving to a non-public address",
+    "redirect_check_disabled": false,
+    "weight_acquisition": "official publisher HTTPS download pinned to commit; SHA-256 verified; supported local GGUF import",
+    "model_file": "FROM ./Qwen3-0.6B-Q8_0.gguf\nPARAMETER num_ctx 4096\n",
+    "registered_name": "course-qwen3:0.6b-q8_0"
+  },
+  "measurements": {
+    "dev-default": {
+      "exit_code": 2,
+      "model_calls_attempted": 7,
+      "prompt_tokens_sum": 2207,
+      "generated_tokens_sum": 2242,
+      "client_call_latency_ms_sum": 23864.459,
+      "metrics": {
+        "decision_accuracy": {
+          "numerator": 7,
+          "denominator": 12,
+          "value": 0.5833333333333334
+        },
+        "answer_coverage": {
+          "numerator": 2,
+          "denominator": 12,
+          "value": 0.16666666666666666
+        },
+        "answerable_recall": {
+          "numerator": 2,
+          "denominator": 7,
+          "value": 0.2857142857142857
+        },
+        "abstention_recall_unanswerable": {
+          "numerator": 5,
+          "denominator": 5,
+          "value": 1.0
+        },
+        "relevant_answer_precision": {
+          "numerator": 2,
+          "denominator": 2,
+          "value": 1.0
+        },
+        "exact_quote_integrity_answered": {
+          "numerator": 2,
+          "denominator": 2,
+          "value": 1.0
+        },
+        "human_review_required": {
+          "numerator": 2,
+          "denominator": 12,
+          "value": 0.16666666666666666
+        },
+        "operational_failures": {
+          "numerator": 3,
+          "denominator": 12,
+          "value": 0.25
+        }
+      },
+      "reason_counts": {
+        "low_coverage": 1,
+        "model_error": 3,
+        "no_evidence": 3,
+        "semantic_review_required": 2,
+        "source_conflict": 1,
+        "verified_model_selection": 2
+      },
+      "report_sha256": "3422346404906c9e61cc99b4974eff813dd1082491d6065a26efc21c6f08965d"
+    },
+    "dev-2048": {
+      "exit_code": 0,
+      "model_calls_attempted": 7,
+      "prompt_tokens_sum": 2207,
+      "generated_tokens_sum": 2581,
+      "client_call_latency_ms_sum": 27236.019,
+      "metrics": {
+        "decision_accuracy": {
+          "numerator": 7,
+          "denominator": 12,
+          "value": 0.5833333333333334
+        },
+        "answer_coverage": {
+          "numerator": 3,
+          "denominator": 12,
+          "value": 0.25
+        },
+        "answerable_recall": {
+          "numerator": 2,
+          "denominator": 7,
+          "value": 0.2857142857142857
+        },
+        "abstention_recall_unanswerable": {
+          "numerator": 5,
+          "denominator": 5,
+          "value": 1.0
+        },
+        "relevant_answer_precision": {
+          "numerator": 2,
+          "denominator": 3,
+          "value": 0.6666666666666666
+        },
+        "exact_quote_integrity_answered": {
+          "numerator": 3,
+          "denominator": 3,
+          "value": 1.0
+        },
+        "human_review_required": {
+          "numerator": 4,
+          "denominator": 12,
+          "value": 0.3333333333333333
+        },
+        "operational_failures": {
+          "numerator": 0,
+          "denominator": 12,
+          "value": 0.0
+        }
+      },
+      "reason_counts": {
+        "low_coverage": 1,
+        "no_evidence": 3,
+        "semantic_review_required": 4,
+        "source_conflict": 1,
+        "verified_model_selection": 3
+      },
+      "report_sha256": "04c6fc96b4badd59c91cc72a1e6616ac3c1f79af0070366b5b7fa1f5f2c60b0a"
+    },
+    "dev-2048-20s": {
+      "exit_code": 2,
+      "model_calls_attempted": 7,
+      "prompt_tokens": {
+        "known_sum": 1867,
+        "calls_with_known_value": 6,
+        "total_attempted_calls": 7
+      },
+      "generated_tokens": {
+        "known_sum": 2012,
+        "calls_with_known_value": 6,
+        "total_attempted_calls": 7
+      },
+      "client_call_latency_ms_sum": 70411.779,
+      "metrics": {
+        "decision_accuracy": {
+          "numerator": 7,
+          "denominator": 12,
+          "value": 0.5833333333333334
+        },
+        "answer_coverage": {
+          "numerator": 2,
+          "denominator": 12,
+          "value": 0.16666666666666666
+        },
+        "answerable_recall": {
+          "numerator": 2,
+          "denominator": 7,
+          "value": 0.2857142857142857
+        },
+        "abstention_recall_unanswerable": {
+          "numerator": 5,
+          "denominator": 5,
+          "value": 1.0
+        },
+        "relevant_answer_precision": {
+          "numerator": 2,
+          "denominator": 2,
+          "value": 1.0
+        },
+        "exact_quote_integrity_answered": {
+          "numerator": 2,
+          "denominator": 2,
+          "value": 1.0
+        },
+        "human_review_required": {
+          "numerator": 4,
+          "denominator": 12,
+          "value": 0.3333333333333333
+        },
+        "operational_failures": {
+          "numerator": 1,
+          "denominator": 12,
+          "value": 0.08333333333333333
+        }
+      },
+      "reason_counts": {
+        "low_coverage": 1,
+        "model_error": 1,
+        "no_evidence": 3,
+        "semantic_review_required": 4,
+        "source_conflict": 1,
+        "verified_model_selection": 2
+      },
+      "report_sha256": "eb968dd0d5bd01d8fbb5288f3124b98f2f2ba0629447950570f7d1f7fc282f25",
+      "comparison_notes": "相同源码，CLI配置仅提高输出预算。距上一组超过2分钟keep_alive，首题发生超时，不能把耗时或内容差异只归因于输出预算；未知token不填0。"
+    }
+  },
+  "limitations": [
+    "公开合成 dev 数据，不能作为独立泛化测试。",
+    "前置应用拒答不等于模型自身拒答能力。",
+    "待审改写未取得真人主张审核，保持待审状态。",
+    "内容核对属于自动维护复核，不是学习者试学。",
+    "原始报告对应记录的源码提交；后续错误提示修复不回写历史实现哈希。",
+    "wall time 与 token 为观察值，不等于硬件费用或 API 计费。"
+  ],
+  "source_commit_scope": "Historical single-default and three dev reports only",
+  "integration_source_files_sha256": {
+    "src/agentlab/rag.py": "07666d37f2087fb86d14fd7b5572d996ada8ee4471f29899f7b3b199b4a26c12",
+    "src/agentlab/local_model.py": "b54bb42f11e6e0f0ef5d5e65af36dde51389b66ea26788822e676cc86b69af59",
+    "src/agentlab/service.py": "0ee035e992ea6c973952802535909757600c78c3e90e635d725d8ebde9ecae66",
+    "src/agentlab/workflow.py": "5ab5085f6d65007baf30fbeb225592cd0289af71af3f4c308fe17acc0839ab1b",
+    "examples/service_client.py": "892e1594cf037192bcf4bbf808353d244691a085be0de54d9751fdb583079e43",
+    "examples/ask_policy.py": "c3c9ea75864003a8e859d0282b189ee7ad2b66ad2d097ca0f91e914328a495cb"
+  },
+  "integration_notes": "New CLI budget flags and precise generation failure text were tested through actual model and HTTP after the historical evaluation commit; source file hashes identify those changes.",
+  "report_hashes": {
+    "single-configured.json": "6fe6d9d854fd3ac790f2680147ec992796d4f8bf3005279edbd79f02facbe19e",
+    "dev-2048.json": "04c6fc96b4badd59c91cc72a1e6616ac3c1f79af0070366b5b7fa1f5f2c60b0a",
+    "dev-default.json": "3422346404906c9e61cc99b4974eff813dd1082491d6065a26efc21c6f08965d",
+    "single-default.json": "3bc4689a872a016366ca86e04fb1c79c91bd0a5ea77a50631c03cf115bde7b58",
+    "actual-model-service.json": "8d7c047389d510a90cf1afed20d466f0a0e8de8ae9d0688957e9cd1768ed7b73",
+    "dev-2048-20s.json": "eb968dd0d5bd01d8fbb5288f3124b98f2f2ba0629447950570f7d1f7fc282f25"
+  }
+}

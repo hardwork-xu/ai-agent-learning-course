@@ -125,6 +125,8 @@ ollama list
 python examples/ask_policy.py "退款审核期限是多少天？" --mode local --model qwen3:0.6b
 ```
 
+单题入口也可以明确配置预算，例如在命令后添加 `--timeout 40 --max-output-tokens 2048`。默认 384 个输出 token 不保证所有模型都能生成完整结果；增加预算后应另存结果，比较用量与失败，不能只展示成功的一次。一次实际 Q8_0 权重实验的截断、待审改写和超时见[完整记录](../experiments/local-model-run.md)。它与上面的 Q4_K_M 标签不是同一个模型产物。
+
 连接失败先检查服务是否启动；`local_model_not_available` 先检查 `ollama list` 中的精确标签；内存不足或持续超时时先停止实验、换更小模型或减少任务量，再记录新的配置。需要更多输出时可在评测命令中调整 `--max-output-tokens`，同时保留截断失败和增加的成本。没有合适资源就先完成离线项目，G6 保持待完成。
 
 环境正常后再跑题集；PowerShell 可把下面的多行命令合成一行执行：
@@ -151,7 +153,7 @@ python -m agentlab.rag_eval --mode local --model YOUR_MODEL_TAG \
 
 本地地址并不自动意味着本地推理：Ollama 服务也能转发云端模型。适配器在发送问题前检查 `/api/tags`，要求存在所选模型及 digest，拒绝带 `remote_host` 或 `remote_model` 的模型元数据。首次检查会缓存到适配器实例；实验过程中不要更换同名模型标签的指向。这依赖可信本地服务如实返回元数据，不能代替服务器的网络隔离。[本地与云端接口说明](https://docs.ollama.com/api/introduction)、[模型列表](https://docs.ollama.com/api/tags)、[上游 API 类型定义](https://github.com/ollama/ollama/blob/main/api/types.go)说明了这一区别。
 
-完成评测但发生连接、超时或预算错误时，命令返回退出码 2，并保留报告。正常完成的质量评测可以返回 0 且包含答错题，应继续分析报告。当前发布没有真实模型运行成绩；运行上面的命令、保存产物并人工检查后，才能写入自己的实验结果。
+完成评测但发生连接、超时或预算错误时，命令返回退出码 2，并保留报告。正常完成的质量评测可以返回 0 且包含未通过的题，应继续分析报告。仓库已保存[指定本地权重的实测结果](../experiments/local-model-run.md)，仍未取得独立真人语义评审；运行自己的配置、保存产物并逐项审核后，才能写入自己的实验结果。
 
 ## 6. 独立任务与验收
 

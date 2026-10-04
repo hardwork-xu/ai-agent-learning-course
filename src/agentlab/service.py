@@ -390,6 +390,10 @@ def main(argv=None) -> int:
     serve.add_argument("--port", type=int, default=8765)
     serve.add_argument("--mode", choices=["extractive", "local"], default="extractive")
     serve.add_argument("--model")
+    serve.add_argument("--timeout", type=float, default=20,
+                       help="local model call budget in seconds, (0, 120]")
+    serve.add_argument("--max-output-tokens", type=int, default=384,
+                       help="local model output budget, 16..2048")
     recover.add_argument("--downstream", type=Path, default=Path("work/downstream.sqlite3"))
     recover.add_argument("--crash-after-effect", action="store_true")
     args = parser.parse_args(argv)
@@ -405,7 +409,13 @@ def main(argv=None) -> int:
             print(json.dumps(deliver_outbox(args.database, args.downstream, crash_after_effect=args.crash_after_effect)))
         else:
             from .rag import GroundedRAG
-            app = Application(args.config, args.database, rag=GroundedRAG(mode=args.mode, model=args.model))
+            from .local_model import LocalModel
+            if not 0 < args.timeout <= 120 or not 16 <= args.max_output_tokens <= 2048:
+                raise ValueError("invalid_model_budget")
+            generator = (LocalModel(args.model, timeout=args.timeout, max_output_tokens=args.max_output_tokens)
+                         if args.mode == "local" else None)
+            app = Application(args.config, args.database,
+                              rag=GroundedRAG(mode=args.mode, model=args.model, generator=generator))
             server = make_server(app, host=args.host, port=args.port)
             print(json.dumps({"status": "listening", "host": args.host, "port": server.server_port,
                               "mode": args.mode}), flush=True)

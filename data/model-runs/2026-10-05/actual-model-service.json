@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "http": "real_loopback",
+  "inference": "real_local_model",
+  "question": "物流追踪信息多久同步？",
+  "answer": "校园商店物流追踪信息每六小时同步一次。",
+  "citations": [
+    {
+      "id": "shipping-tracking",
+      "quote": "校园商店物流追踪信息每六小时同步一次。",
+      "revision": "2026-09"
+    }
+  ],
+  "usage": {
+    "requested_model": "course-qwen3:0.6b-q8_0",
+    "reported_model": "course-qwen3:0.6b-q8_0",
+    "server_version": "0.35.1",
+    "model_digest": "03b681e337f70e7d44ef27719410aa95b5f387a6b533cb6c22a1298dbd223e4f",
+    "max_output_tokens": 2048,
+    "timeout_seconds": 40.0,
+    "prompt_eval_count": 290,
+    "eval_count": 182,
+    "prompt_eval_cached_count": 238,
+    "total_duration": 5409027167,
+    "load_duration": 7989459,
+    "prompt_eval_duration": 43344000,
+    "eval_duration": 5316465000
+  },
+  "model_timeout": 40,
+  "http_timeout": 55,
+  "output_token_limit": 2048,
+  "reviewer": "simulated_test_actor",
+  "local_ticket_count": 1,
+  "downstream_effect_count": 1,
+  "same_key_replay_reused_ticket": true,
+  "human_learning_verified": false
+}
