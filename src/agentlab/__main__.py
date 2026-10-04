@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 
 from .evaluation import evaluate
+from .console import configure_utf8_output
 from .quality import assess_refund_sum
 from .retrieval import demo_retriever
 from .runtime import Finish, Runtime, ScriptedPlanner, ToolCall, demo_tools
@@ -66,6 +67,7 @@ def workflow_demo() -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description="Offline learning labs; live calls require an explicit flag.")
     commands = parser.add_subparsers(dest="command", required=True)
     demo = commands.add_parser("demo")

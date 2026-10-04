@@ -7,10 +7,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "src"))
+from agentlab.console import configure_utf8_output
 from exercises.grading import TASKS, load_submission, run_submission
 
 
 def main():
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--submission", type=Path, required=True, help="trusted local Python file")
     parser.add_argument("--task", choices=(*TASKS, "all"), default="all")

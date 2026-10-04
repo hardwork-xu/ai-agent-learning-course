@@ -18,6 +18,7 @@ from typing import Callable
 import uuid
 
 from .workflow import TicketWorkflow, WorkflowError, identifier
+from .console import configure_utf8_output
 
 MAX_BODY = 16384
 
@@ -375,6 +376,7 @@ def make_server(app: Application, *, host: str = "127.0.0.1", port: int = 8765) 
 
 
 def main(argv=None) -> int:
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     initialize = sub.add_parser("init")

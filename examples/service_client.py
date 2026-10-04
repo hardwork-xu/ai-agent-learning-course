@@ -9,6 +9,7 @@ from urllib.request import Request, urlopen
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from agentlab.service import load_config
+from agentlab.console import configure_utf8_output
 
 
 def send(url, token, method, path, payload=None):
@@ -28,6 +29,7 @@ def send(url, token, method, path, payload=None):
 
 
 def main():
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("work/service-auth.json"))
     parser.add_argument("--url", default="http://127.0.0.1:8765")

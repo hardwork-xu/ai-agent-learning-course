@@ -3,9 +3,11 @@ import argparse
 import json
 
 from agentlab.rag import GroundedRAG
+from agentlab.console import configure_utf8_output
 
 
 def main():
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("question")
     parser.add_argument("--tenant", default="campus")

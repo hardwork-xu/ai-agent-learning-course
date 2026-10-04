@@ -10,6 +10,7 @@ from pathlib import Path
 import time
 
 from .local_model import LocalModel, ModelError
+from .console import configure_utf8_output
 from .rag import GroundedRAG, REWRITES, STOP_BIGRAMS, fixture
 
 
@@ -141,6 +142,7 @@ def evaluate(*, mode: str = "extractive", model: str | None = None, split: str =
 
 
 def main(argv=None):
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--mode", choices=("extractive", "local"), default="extractive")
