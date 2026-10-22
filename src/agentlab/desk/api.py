@@ -175,10 +175,13 @@ class RequestBoundary:
 
 
 def create_app(*, data_dir: str | Path, model: str | None = None,
+               protocol: str = "observed-evidence-v2", think: bool | None = False,
                workers: int = 2, capacity: int = 16,
                allowed_hosts: list[str] | None = None, engine=None) -> FastAPI:
     if type(workers) is not int or not 0 <= workers <= 8:
         raise ValueError("workers must be in [0, 8]")
+    if protocol not in {"original", "observed-evidence-v1", "observed-evidence-v2"} or (think is not None and type(think) is not bool):
+        raise ValueError("invalid planner configuration")
     directory = Path(data_dir)
     config = directory / "auth.json"
     load_config(config)  # Never invent credentials at server startup.
@@ -188,7 +191,7 @@ def create_app(*, data_dir: str | Path, model: str | None = None,
         factory = None
         if model:
             from .planner import LocalPlanner
-            factory = lambda: LocalPlanner(model=model)
+            factory = lambda: LocalPlanner(model=model, protocol=protocol, think=think)
         engine = Engine(store, knowledge, planner_factory=factory)
     worker_group = WorkerGroup(engine, workers)
     rate_limit = RateLimit()

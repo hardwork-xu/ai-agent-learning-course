@@ -1,0 +1,14 @@
+{
+  "base_commit": "1481730332506f10bebf2c1b1f39c4174c7a1161",
+  "patch": "observed-evidence-v1.patch",
+  "apply_mode": "git apply --unidiff-zero (only on the exact base commit)",
+  "patch_sha256": "7239258bdfa6eb4bfab5502f4b3d0df50155f2c2d1662e0bd25591761d0da7b0",
+  "changed_files": [
+    "scripts/evaluate_desk_model.py",
+    "src/agentlab/desk/planner.py",
+    "tests/test_desk_engine.py"
+  ],
+  "report": "../model-run-4b-observed-v1.json",
+  "reconstructed_source_hashes_verified": 18,
+  "purpose": "Preserve the failed v1 experiment exactly; this is historical source, not the recommended protocol."
+}

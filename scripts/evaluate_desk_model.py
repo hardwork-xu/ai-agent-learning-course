@@ -68,7 +68,8 @@ def run_case(store, knowledge, task, mode, *, args, remaining, model_digest):
     question = task["question"]
     run = store.create("campus", "evaluation_requester", question, task["id"], mode)
     factory = None if mode == "baseline" else lambda: LocalPlanner(args.model, base_url=args.base_url,
-        timeout=args.timeout, max_output_tokens=args.max_output_tokens, expected_digest=model_digest)
+        timeout=args.timeout, max_output_tokens=args.max_output_tokens, expected_digest=model_digest,
+        protocol=args.protocol, think={"default": None, "true": True, "false": False}[args.think])
     engine = Engine(store, knowledge, planner_factory=factory, max_steps=args.max_steps,
                     timeout_seconds=max(.01, min(args.task_timeout, remaining)))
     started = time.perf_counter()
@@ -139,6 +140,7 @@ def execute(args, checkpoint=lambda report: None):
     configuration = {"selected_tasks": selected, "operational_tasks": [] if args.no_operational else [t["id"] for t in OPERATIONAL_TASKS],
         "tenant": "campus", "model": args.model, "model_wait_seconds": args.timeout,
         "max_output_tokens": args.max_output_tokens, "max_steps": args.max_steps,
+        "planner_protocol": args.protocol, "think": args.think,
         "task_execution_seconds": args.task_timeout, "harness_total_seconds": args.total_timeout,
         "retrieval": "same KnowledgeStore BM25, positive score, query limit 1..5; baseline uses fixed query once and local chooses tools/queries",
         "baseline": "fixed optional case lookup, one search, up to three evidence excerpts; not an LLM",
@@ -222,6 +224,8 @@ def main(argv=None):
     parser.add_argument("--base-url", default="http://127.0.0.1:11434")
     parser.add_argument("--timeout", type=float, default=40)
     parser.add_argument("--max-output-tokens", type=int, default=2048)
+    parser.add_argument("--protocol", choices=("original", "observed-evidence-v1", "observed-evidence-v2"), default="original")
+    parser.add_argument("--think", choices=("default", "true", "false"), default="default")
     parser.add_argument("--task-timeout", type=float, default=90)
     parser.add_argument("--total-timeout", type=float, default=1200)
     parser.add_argument("--max-steps", type=int, default=8)

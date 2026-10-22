@@ -1,0 +1,56 @@
+{
+  "purpose": "schema_failure_diagnostic_not_benchmark",
+  "rows": [
+    {
+      "mode": "original_schema",
+      "question": "原支付银行卡退款批准以后，预计多久到账？",
+      "changed_field": "API format only; exact same system/user prompt",
+      "thinking_saved": false,
+      "validation_error": "invalid_planner_decision",
+      "output_content": "{\"arguments\": {\"case_id\": \"case_12345\"}, \"name\": \"lookup_case\", \"type\": \"tool\"}",
+      "done": true,
+      "done_reason": "stop",
+      "usage": {
+        "requested_model": "casedesk-qwen3:4b-q4km",
+        "reported_model": "casedesk-qwen3:4b-q4km",
+        "server_version": "0.35.1",
+        "model_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+        "max_output_tokens": 2048,
+        "timeout_seconds": 40,
+        "prompt_eval_count": 524,
+        "eval_count": 32,
+        "prompt_eval_cached_count": 0,
+        "total_duration": 4582991708,
+        "load_duration": 2309488375,
+        "prompt_eval_duration": 1362083000,
+        "eval_duration": 887625000
+      }
+    },
+    {
+      "mode": "without_format",
+      "question": "原支付银行卡退款批准以后，预计多久到账？",
+      "changed_field": "API format only; exact same system/user prompt",
+      "thinking_saved": false,
+      "validation_error": "illegal_phase_action",
+      "output_content": "{\"oneOf\": [{\"type\": \"object\", \"additionalProperties\": false, \"properties\": {\"type\": \"tool\", \"name\": \"lookup_case\", \"arguments\": {\"type\": \"object\", \"additionalProperties\": false, \"properties\": {\"case_id\": {\"type\": \"string\"}}, \"required\": [\"case_id\"]}}, \"required\": [\"type\", \"name\", \"arguments\"]}, {\"type\": \"object\", \"additionalProperties\": false, \"properties\": {\"type\": \"tool\", \"name\": \"search_knowledge\", \"arguments\": {\"type\": \"object\", \"additionalProperties\": false, \"properties\": {\"query\": {\"type\": \"string\"}, \"limit\": {\"type\": \"integer\", \"minimum\": 1, \"maximum\": 5}}, \"required\": [\"query\"]}}, \"required\": [\"type\", \"name\", \"arguments\"]}]}",
+      "done": true,
+      "done_reason": "stop",
+      "usage": {
+        "requested_model": "casedesk-qwen3:4b-q4km",
+        "reported_model": "casedesk-qwen3:4b-q4km",
+        "server_version": "0.35.1",
+        "model_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+        "max_output_tokens": 2048,
+        "timeout_seconds": 40,
+        "prompt_eval_count": 524,
+        "eval_count": 181,
+        "prompt_eval_cached_count": 523,
+        "total_duration": 4762403375,
+        "load_duration": 1231167,
+        "prompt_eval_duration": 24377000,
+        "eval_duration": 4722867000
+      }
+    }
+  ],
+  "conclusion": "Removing API format alone did not fix output; full-schema prompt copying remained. These two observations do not isolate decoder ordering as the sole cause. v2 changes action naming, prompt presentation, and grounded case-id availability together."
+}

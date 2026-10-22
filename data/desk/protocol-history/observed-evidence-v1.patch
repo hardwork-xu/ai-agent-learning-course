@@ -1,0 +1,180 @@
+--- a/scripts/evaluate_desk_model.py
++++ b/scripts/evaluate_desk_model.py
+@@ -71 +71,2 @@
+-        timeout=args.timeout, max_output_tokens=args.max_output_tokens, expected_digest=model_digest)
++        timeout=args.timeout, max_output_tokens=args.max_output_tokens, expected_digest=model_digest,
++        protocol=args.protocol, think={"default": None, "true": True, "false": False}[args.think])
+@@ -141,0 +143 @@
++        "planner_protocol": args.protocol, "think": args.think,
+@@ -224,0 +227,2 @@
++    parser.add_argument("--protocol", choices=("original", "observed-evidence-v1"), default="original")
++    parser.add_argument("--think", choices=("default", "true", "false"), default="default")
+--- a/src/agentlab/desk/planner.py
++++ b/src/agentlab/desk/planner.py
+@@ -32,0 +33,53 @@
++
++
++
++def observed_evidence_protocol(observations):
++    """Build model-facing aliases from exact observed (chunk, revision) pairs.
++
++    Full identities stay in trusted application memory. No prefix matching,
++    guessed IDs, fuzzy quote repair or tenant selector is accepted.
++    """
++    aliases, reverse, view = {}, {}, []
++    for observation in observations:
++        item = dict(observation)
++        if item.get("name") == "search_knowledge" and item.get("type") == "tool":
++            converted = []
++            for evidence in item["result"]:
++                identity = (evidence["id"], evidence["revision"])
++                if identity not in reverse:
++                    alias = "e" + str(len(aliases) + 1)
++                    reverse[identity] = alias
++                    aliases[alias] = {"id": identity[0], "revision": identity[1]}
++                converted.append({"ref": reverse[identity], **{k: evidence[k] for k in
++                    ("document_id", "title", "text", "source") if k in evidence}})
++            item["result"] = converted
++        view.append(item)
++    schema = json.loads(json.dumps(DECISION_SCHEMA))
++    has_tool_observation = any(o.get("type") == "tool" for o in observations)
++    if not has_tool_observation:
++        # This product investigates a submitted support question. Its first
++        # action must read data; a later observation can justify clarification.
++        schema["oneOf"] = schema["oneOf"][:2]
++    elif not aliases:
++        schema["oneOf"] = [branch for branch in schema["oneOf"]
++                           if branch["properties"]["type"]["const"] != "finish"]
++    else:
++        citation = {"type": "object", "additionalProperties": False,
++                    "properties": {"ref": {"type": "string", "enum": list(aliases)},
++                                   "quote": {"type": "string"}}, "required": ["ref", "quote"]}
++        next(branch for branch in schema["oneOf"] if branch["properties"]["type"]["const"] == "finish")["properties"]["citations"]["items"] = citation
++    return view, schema, aliases
++
++
++def resolve_evidence_aliases(decision, aliases):
++    if not isinstance(decision, dict) or decision.get("type") != "finish":
++        return decision
++    if set(decision) != {"type", "answer", "citations"} or not isinstance(decision["citations"], list):
++        raise DeskError("invalid_planner_decision")
++    resolved = []
++    for citation in decision["citations"]:
++        if (not isinstance(citation, dict) or set(citation) != {"ref", "quote"}
++                or not isinstance(citation["ref"], str) or citation["ref"] not in aliases):
++            raise DeskError("unknown_evidence_reference")
++        resolved.append({**aliases[citation["ref"]], "quote": citation["quote"]})
++    return {"type": "finish", "answer": decision["answer"], "citations": resolved}
+@@ -106 +159,5 @@
+-                 max_output_tokens=2048, expected_digest=None, transport=None):
++                 max_output_tokens=2048, expected_digest=None, transport=None,
++                 protocol="original", think=None):
++        if protocol not in {"original", "observed-evidence-v1"} or (think is not None and type(think) is not bool):
++            raise ValueError("invalid_planner_configuration")
++        self.protocol, self.think = protocol, think
+@@ -129,2 +186,5 @@
+-            response = self.model._request("POST", "/api/chat", {
+-                "model": self.model.model, "stream": False, "format": DECISION_SCHEMA,
++            view, schema, aliases = observations, DECISION_SCHEMA, {}
++            if self.protocol == "observed-evidence-v1":
++                view, schema, aliases = observed_evidence_protocol(observations)
++            payload = {
++                "model": self.model.model, "stream": False, "format": schema,
+@@ -139 +199,3 @@
+-                        "要覆盖问题的全部条件，不猜日期、金额或到账状态。finish给出answer和原文引文id/revision/quote，"
++                        "要覆盖问题的全部条件，不猜日期、金额或到账状态。" +
++                        ("finish给出answer和已观察证据的ref与原文quote，" if self.protocol == "observed-evidence-v1"
++                         else "finish给出answer和原文引文id/revision/quote，") +
+@@ -141,3 +203,8 @@
+-                        "每个finish只是待人工语义审核的草稿；不得声称已批准、已退款或已创建工单。"
+-                        "动作格式：" + json.dumps(DECISION_SCHEMA, ensure_ascii=False))},
+-                    {"role": "user", "content": json.dumps({"question": question, "observations": observations}, ensure_ascii=False)},
++                        "每个finish只是待人工语义审核的草稿；不得声称已批准、已退款或已创建工单。" +
++                        ("当前协议要求先调查：没有工具观察时必须先选择lookup_case或search_knowledge。"
++                         "可按工单状态、支付渠道和计划类型决定后续查询；不得把原问题原样作为补问。"
++                         "检索证据只用ref短别名引用，不猜id或revision。finish的citations每项仅含ref和逐字quote。"
++                         "仅在证据覆盖完整问题后finish；一次查询不够可再次search。"
++                         if self.protocol == "observed-evidence-v1" else "") +
++                        "动作格式：" + json.dumps(schema, ensure_ascii=False))},
++                    {"role": "user", "content": json.dumps({"question": question, "observations": view}, ensure_ascii=False)},
+@@ -145 +212,4 @@
+-            }, timeout=budget)
++            }
++            if self.think is not None:
++                payload["think"] = self.think
++            response = self.model._request("POST", "/api/chat", payload, timeout=budget)
+@@ -162,0 +233,5 @@
++                if self.protocol == "observed-evidence-v1":
++                    allowed = {branch["properties"]["type"]["const"] for branch in schema["oneOf"]}
++                    if not isinstance(decision, dict) or decision.get("type") not in allowed:
++                        raise DeskError("illegal_phase_action")
++                    decision = resolve_evidence_aliases(decision, aliases)
+@@ -164,2 +239,3 @@
+-            except DeskError:
+-                raise ModelError("invalid_planner_decision") from None
++            except DeskError as exc:
++                code = exc.code if exc.code in {"unknown_evidence_reference", "illegal_phase_action"} else "invalid_planner_decision"
++                raise ModelError(code) from None
+--- a/tests/test_desk_engine.py
++++ b/tests/test_desk_engine.py
+@@ -14 +14 @@
+-from agentlab.desk.planner import LocalPlanner, validate_decision
++from agentlab.desk.planner import LocalPlanner, validate_decision, observed_evidence_protocol, resolve_evidence_aliases
+@@ -407,0 +408,57 @@
++    def test_observed_protocol_initial_action_space_requires_read_only_tool(self):
++        view, schema, aliases = observed_evidence_protocol([])
++        self.assertEqual(view, [])
++        self.assertEqual(aliases, {})
++        self.assertEqual({b["properties"]["type"]["const"] for b in schema["oneOf"]}, {"tool"})
++        transport = self.Transport()
++        transport.payload = {"type": "clarify", "question": "repeat"}
++        planner = LocalPlanner("fixture-local", transport=transport, protocol="observed-evidence-v1", think=False)
++        with self.assertRaises(ModelError) as ctx:
++            planner.next("question", [], remaining_seconds=30)
++        self.assertEqual(ctx.exception.code, "illegal_phase_action")
++        self.assertIs(transport.requests[-1][2]["think"], False)
++
++    def test_observed_protocol_empty_lookup_allows_clarification_but_no_finish(self):
++        obs = [{"type": "tool", "name": "lookup_case", "result": {"found": False}}]
++        _, schema, aliases = observed_evidence_protocol(obs)
++        self.assertFalse(aliases)
++        self.assertEqual({b["properties"]["type"]["const"] for b in schema["oneOf"]}, {"tool", "clarify", "abstain"})
++
++    def test_exact_alias_mapping_deduplicates_identity_and_preserves_quote(self):
++        evidence = {"id": "a"*64, "revision": "b"*64, "document_id": "policy", "title": "policy", "text": "精确原文"}
++        obs = [{"type": "tool", "name": "search_knowledge", "result": [evidence]},
++               {"type": "tool", "name": "search_knowledge", "result": [evidence]}]
++        view, _, aliases = observed_evidence_protocol(obs)
++        self.assertEqual(list(aliases), ["e1"])
++        self.assertEqual(view[0]["result"][0]["ref"], "e1")
++        self.assertNotIn("revision", view[0]["result"][0])
++        self.assertNotIn("id", view[0]["result"][0])
++        decision = resolve_evidence_aliases({"type": "finish", "answer": "答复", "citations": [{"ref": "e1", "quote": "精确原文"}]}, aliases)
++        self.assertEqual(decision["citations"], [{"id": "a"*64, "revision": "b"*64, "quote": "精确原文"}])
++        for ref in ("e10", "E1", "e1-extra", "e2"):
++            with self.assertRaises(DeskError):
++                resolve_evidence_aliases({"type": "finish", "answer": "a", "citations": [{"ref": ref, "quote": "精确原文"}]}, aliases)
++
++    def test_alias_response_cannot_inject_identity_or_foreign_tenant(self):
++        evidence = {"id": "campus-only-chunk", "revision": "campus-revision", "text": "退款政策"}
++        observations = [{"type": "tool", "name": "search_knowledge", "result": [evidence]}]
++        transport = self.Transport()
++        transport.payload = {"type": "finish", "answer": "a", "citations": [{"ref": "e1", "quote": "退款政策", "id": "foreign-chunk"}]}
++        planner = LocalPlanner("fixture-local", transport=transport, protocol="observed-evidence-v1")
++        with self.assertRaises(ModelError) as ctx:
++            planner.next("a", observations, remaining_seconds=30)
++        self.assertEqual(ctx.exception.code, "unknown_evidence_reference")
++        transport.payload = {"type": "tool", "name": "lookup_case", "arguments": {"case_id": "CASE-2001", "tenant": "partner"}}
++        with self.assertRaises(ModelError) as ctx:
++            planner.next("a", observations, remaining_seconds=30)
++        self.assertEqual(ctx.exception.code, "invalid_planner_decision")
++
++    def test_alias_reply_translates_to_normal_runtime_citation_contract(self):
++        evidence = {"id": "current-chunk", "revision": "current-revision", "text": "可逐字验证的政策。"}
++        transport = self.Transport()
++        transport.payload = {"type": "finish", "answer": "政策说明", "citations": [{"ref": "e1", "quote": "可逐字验证的政策。"}]}
++        planner = LocalPlanner("fixture-local", transport=transport, protocol="observed-evidence-v1")
++        result = planner.next("a", [{"type": "tool", "name": "search_knowledge", "result": [evidence]}], remaining_seconds=30)
++        self.assertEqual(result["citations"], [{"id": "current-chunk", "revision": "current-revision", "quote": "可逐字验证的政策。"}])
++        self.assertNotIn("think", transport.requests[-1][2])
++

@@ -36,8 +36,8 @@ class DeskEvaluationTests(unittest.TestCase):
     def test_dataset_labels_exist_and_family_split_is_explicit(self):
         dataset = task_dataset()
         families = {}
-        manifest = json.loads(Path(__file__).resolve().parents[1].joinpath("src/agentlab/desk/documents/manifest.json").read_text())
-        texts = {item["id"]: Path(__file__).resolve().parents[1].joinpath("src/agentlab/desk/documents", item["file"]).read_text() for item in manifest["documents"]}
+        manifest = json.loads(Path(__file__).resolve().parents[1].joinpath("src/agentlab/desk/documents/manifest.json").read_text(encoding="utf-8"))
+        texts = {item["id"]: Path(__file__).resolve().parents[1].joinpath("src/agentlab/desk/documents", item["file"]).read_text(encoding="utf-8") for item in manifest["documents"]}
         for task in dataset["tasks"]:
             self.assertEqual(families.setdefault(task["family"], task["split"]), task["split"])
             for requirement in task["required_evidence"]:

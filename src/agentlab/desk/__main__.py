@@ -24,6 +24,8 @@ def main(argv=None):
             item.add_argument("--port", type=int, default=8766)
             item.add_argument("--allow-host", action="append", default=[])
             item.add_argument("--model", help="explicit locally installed Ollama tag")
+            item.add_argument("--protocol", choices=["original", "observed-evidence-v1", "observed-evidence-v2"], default="observed-evidence-v2")
+            item.add_argument("--think", choices=["default", "true", "false"], default="false")
             item.add_argument("--workers", type=int, default=2, help="bounded model workers, not ASGI processes")
             item.add_argument("--capacity", type=int, default=16)
         elif name == "deliver":
@@ -33,7 +35,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         from .knowledge import KnowledgeStore
-        from .store import Store
+        from .store import DeskError, Store
         if args.command == "init":
             args.data_dir.mkdir(parents=True, exist_ok=True)
             if os.name == "posix":
@@ -53,11 +55,12 @@ def main(argv=None):
             import uvicorn
             from .api import create_app
             if not 0 < args.port < 65536 or not 1 <= args.workers <= 8 or not 1 <= args.capacity <= 256:
-                raise ValueError("invalid_limits")
+                raise DeskError("invalid_limits")
             hosts = ["127.0.0.1", "localhost"] + args.allow_host
             if any(not host or host == "*" or "/" in host for host in hosts):
-                raise ValueError("invalid_hosts")
-            app = create_app(data_dir=args.data_dir, model=args.model,
+                raise DeskError("invalid_hosts")
+            thinking = None if args.think == "default" else args.think == "true"
+            app = create_app(data_dir=args.data_dir, model=args.model, protocol=args.protocol, think=thinking,
                              workers=args.workers, capacity=args.capacity, allowed_hosts=hosts)
             uvicorn.run(app, host=args.host, port=args.port, access_log=False,
                         log_level="warning", limit_concurrency=100,
@@ -66,15 +69,15 @@ def main(argv=None):
             settings = load_config(args.data_dir / "auth.json")
             if args.command == "deliver":
                 if not settings["write_enabled"]:
-                    raise ValueError("writes_disabled")
+                    raise DeskError("writes_disabled")
                 print(json.dumps(Store(args.data_dir / "desk.sqlite3").deliver(args.downstream)))
             else:
                 if settings["write_enabled"]:
-                    raise ValueError("disable_writes_and_stop_service_before_backup")
+                    raise DeskError("disable_writes_and_stop_service_before_backup")
                 # Two independent snapshots require the documented stopped-service
                 # operation; this command does not pretend they are atomic together.
                 if args.destination.exists():
-                    raise ValueError("destination_exists")
+                    raise DeskError("destination_exists")
                 args.destination.mkdir(parents=True, mode=0o700)
                 import sqlite3
                 from contextlib import closing
@@ -82,13 +85,13 @@ def main(argv=None):
                     for name in ("desk.sqlite3", "knowledge.sqlite3"):
                         source = args.data_dir / name
                         if not source.is_file():
-                            raise ValueError("database_missing")
+                            raise DeskError("database_missing")
                         target = args.destination / name
                         with closing(sqlite3.connect(source.resolve().as_uri() + "?mode=ro", uri=True)) as src:
                             with closing(sqlite3.connect(target)) as dst:
                                 src.backup(dst)
                                 if dst.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
-                                    raise ValueError("snapshot_integrity")
+                                    raise DeskError("snapshot_integrity")
                         if os.name == "posix":
                             target.chmod(0o600)
                     (args.destination / "manifest.json").write_text(json.dumps({

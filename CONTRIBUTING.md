@@ -23,6 +23,18 @@ python -m agentlab evaluate --output work/evaluation.json
 
 文档使用 UTF-8，标题表达具体问题。链接优先使用仓库相对路径，图片必须有替代说明。示例命令从仓库根目录执行。保持默认运行无网络、无凭据、无外部写入。
 
+修改 CaseDesk 时，先安装独立的 Web 依赖，并验证实际服务链路：
+
+```bash
+python -m pip install -r requirements-desk.lock
+python -m pip install -e . --no-deps
+python -m unittest discover -s tests -p "test_desk*.py" -v
+python scripts/smoke_desk.py
+python -m agentlab.desk.evaluate --output work/desk-retrieval.json
+```
+
+下载依赖可能联网；默认运行不调用模型或外部业务系统。真实模型实验必须显式选择已安装模型，并完整保存配置、版本、用量与失败。不得把新的报告覆盖到旧配置的结果文件。参考代码、维护者检查、学生自述与经过观察的真人试学分别记录。
+
 ## 公开内容边界
 
 仅提交自有或许可明确的内容，数据优先使用合成样例。不要提交密钥、个人联系方式、真实客户记录、聊天记录、机器绝对路径、浏览器状态、原始生产日志或未经授权的课程材料。

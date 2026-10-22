@@ -6,6 +6,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 HAS_API = all(importlib.util.find_spec(name) for name in ("fastapi", "httpx"))
 if HAS_API:
@@ -130,6 +131,21 @@ class ApiTests(unittest.TestCase):
             self.assertEqual(client.get("/health").status_code, 200)
             self.assertLess(time.monotonic() - start, .75)
             release.set()
+
+    def test_model_configuration_reaches_planner_without_implicit_call(self):
+        with patch("agentlab.desk.planner.LocalPlanner") as planner:
+            app = create_app(data_dir=self.root, model="explicit-local-tag", workers=0)
+            planner.assert_not_called()
+            app.state.engine.planner_factory()
+            planner.assert_called_once_with(model="explicit-local-tag", protocol="observed-evidence-v2", think=False)
+            planner.reset_mock()
+            historical = create_app(data_dir=self.root, model="explicit-local-tag", workers=0,
+                                    protocol="original", think=None)
+            historical.state.engine.planner_factory()
+            planner.assert_called_once_with(model="explicit-local-tag", protocol="original", think=None)
+        for options in ({"protocol": "unknown"}, {"think": "false"}, {"think": 0}):
+            with self.assertRaisesRegex(ValueError, "invalid planner configuration"):
+                create_app(data_dir=self.root, workers=0, **options)
 
 
 if __name__ == "__main__":

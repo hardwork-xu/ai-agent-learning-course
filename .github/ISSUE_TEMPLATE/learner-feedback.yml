@@ -1,0 +1,53 @@
+name: 学习反馈与迁移结果
+description: 提交不含个人资料的学习阻碍或独立实践反馈。自述不自动计为已核验学习效果。
+title: "[学习反馈] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        GitHub Issue 是公开内容，并关联提交账号；它不是匿名问卷。不愿公开的试学记录保留在本地。
+        请只填写课程任务与合成数据，不填写姓名、学校、公司内部材料、访问凭据、完整日志或私人路径。
+        此表用于定位课程问题，不提供就业保证，也不要求提交简历。时间和结果可以留空或填写未完成。
+  - type: input
+    id: version
+    attributes:
+      label: 仓库版本与任务
+      description: 提交号或分支，以及练习名称，例如 CaseDesk 第二轮。
+    validations:
+      required: true
+  - type: dropdown
+    id: preparation
+    attributes:
+      label: 开始前的基础
+      options:
+        - 基础 Python 尚需补课
+        - 能独立写 Python 脚本
+        - 做过 HTTP 和数据库应用
+        - 不填写
+  - type: dropdown
+    id: result
+    attributes:
+      label: 这次完成到哪里
+      options:
+        - 未完成环境搭建
+        - 跑通参考示例
+        - 在提示后完成修改
+        - 独立完成新约束或新场景
+        - 尚无法判断
+  - type: textarea
+    id: obstacle
+    attributes:
+      label: 预期、实际现象与最小复现
+      description: 说明卡住的步骤。只保留必要且脱敏的错误码；没有错误也可以反馈最费解的概念。
+    validations:
+      required: true
+  - type: textarea
+    id: transfer
+    attributes:
+      label: 可选：独立变化与得到的帮助
+      description: 说明改了什么、怎样验证、哪些部分参考了答案或接受了帮助。只贴自己允许公开的代码链接。
+  - type: input
+    id: time
+    attributes:
+      label: 可选：投入时间和最有用的部分
+      description: 粗略范围即可，未计时请写未知。

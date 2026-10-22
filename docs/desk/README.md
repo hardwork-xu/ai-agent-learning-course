@@ -6,6 +6,8 @@
 
 对大学生而言，重点是把代码变成能解释的工程判断：为什么有了 JSON 还要验证工具，为什么取消不等于撤销，为什么引用正确仍须审核，为什么接口快速返回不代表后台有容量。先完成[基础练习](../practice.md)与[项目 04–05](../projects/README.md)，再进入这里。
 
+先检查是否具备本节所需基础：能读写 Python 字典、处理异常，知道 HTTP 状态码和 SQLite 事务的用途，并能说明申请人与审核人的区别。如果有一项完全陌生，先回到[先修诊断](../prerequisites.md)的对应章节；不必先通读全部研究章节。进入这里后的路线是：**跑通参考流程 → 亲手做接口反例 → 完成一项独立改动 → 整理可核查的作品证据**。
+
 ## 先跑通一次完整流程
 
 需要 Python 3.11+，先在仓库根目录创建虚拟环境。macOS / Linux：
@@ -21,7 +23,7 @@ Windows PowerShell：
 py -3 -m venv .venv
 ```
 
-Windows 接下来的每个 `python` 都替换成 `.\.venv\Scripts\python.exe`，不依赖脚本执行策略。然后安装固定版本的应用依赖和课程包：
+Windows 接下来的每个 `python` 都替换成 `.\.venv\Scripts\python.exe`，不依赖脚本执行策略；找不到 `py` 时先确认已安装 Python 3.11+。已有本课程虚拟环境时直接复用。安装前执行 `python --version` 确认解释器版本，然后安装固定版本的应用依赖和课程包：
 
 ```bash
 python -m pip install -r requirements-desk.lock
@@ -30,7 +32,7 @@ python -m agentlab.desk init --data-dir work/casedesk --demo
 python -m agentlab.desk serve --data-dir work/casedesk
 ```
 
-浏览器打开 `http://127.0.0.1:8766`。在本地编辑器打开 `work/casedesk/auth.json`，找到 `campus-requester` 的 `token`，粘贴到页面；它是随机生成的本地访问凭据，不能放进截图、作业报告或 Git。页面只在内存保存它，刷新后需要重新连接。`partner` 是另一个隔离工作区，不能审核 `campus` 的任务。
+`serve` 是持续运行的前台服务，终端停留在这里属于正常现象。保留这个终端，浏览器打开 `http://127.0.0.1:8766`。需要运行后文脚本时，另开终端并回到仓库根目录、使用同一虚拟环境；停止服务才按 Ctrl-C。在本地编辑器打开 `work/casedesk/auth.json`，找到 `campus-requester` 的 `token`，粘贴到页面；它是随机生成的本地访问凭据，和模型供应商的 API Key 不同；本节需要前者，不需要后者。不能把它放进截图、作业报告或 Git。页面只在内存保存它，刷新后需要重新连接。`partner` 是另一个隔离工作区，不能审核 `campus` 的任务。
 
 1. 输入“CASE-1001 使用原支付银行卡，退款获批后预计多久到账？不要计算具体日期。”，选择“直接检索”，创建任务。
 2. 刷新任务状态。看到“待审核”后，检查答复里的条件和引文；检索命中不等于已经回答完整。
@@ -42,6 +44,19 @@ python -m agentlab.desk serve --data-dir work/casedesk
 页面可以改写答复，当前引文集合沿用该任务已有引文；需要改变引文集合时使用有版本检查的审核 API，或新建任务重新取得证据。不要在现有引文不能支持时批准一个更完整但无依据的答案。
 
 这次手动操作是真实使用练习，仍不代表已经测量学习效果。只想先检查安装时，运行 `python scripts/smoke_desk.py`；该命令使用临时资料和模拟审核人，结束后清理进程及数据库。
+
+首次操作卡住时先按下表定位，避免靠删库或换凭据反复尝试：
+
+| 现象 | 先检查什么 |
+| --- | --- |
+| `ModuleNotFoundError` 或 `desk_dependencies_missing` | 当前终端是否使用刚刚安装依赖的虚拟环境；先运行 `python -m pip show agent-learning-lab fastapi httpx` |
+| 页面打不开 | `serve` 终端是否仍运行，地址和端口是否一致；端口占用时先确认原服务归属，或改用 `--port 8767` 并同步修改浏览器和练习脚本地址 |
+| 无权限批准／取消 | 当前是申请人还是审核人；批准必须换成同租户的另一审核身份，取消由任务申请人执行 |
+| 一直等待处理 | 服务不能只执行 `init`；检查运行 `serve` 的终端和任务“处理记录”，失败信息先保留 |
+| `capacity_exceeded` | 已有排队、补问、待审或批准任务也占容量；先处理或取消不再需要的合成任务，不把删除数据库当正常排障 |
+| `version_conflict` 或 `citation_stale` | 刷新后重新核对任务版本或取得最新资料；不能为了通过提交而绕过版本检查 |
+
+下一步直接进入[第一轮接口练习](learning-lab.md#第一轮一条任务从哪里来到哪里去)，它提供不把 token 放进命令行的实际反例。
 
 ## 哪些能力已经接在一起
 
@@ -57,8 +72,12 @@ python -m agentlab.desk serve --data-dir work/casedesk
 “直接检索”是固定对照：识别案例编号后查询记录，检索一次，返回最多三个片段。“模型协作”由显式选定的本地 Ollama 模型决定只读动作，可继续查资料或补问。两种方式只要产生答案草稿，都须人工审核；无依据可拒答，缺少必要条件可补问，运行错误会失败。模型模式不会自动下载权重或改用付费 API。
 
 ```bash
-python -m agentlab.desk serve --data-dir work/casedesk --model YOUR_INSTALLED_LOCAL_MODEL
+python -m agentlab.desk serve --data-dir work/casedesk --model YOUR_INSTALLED_LOCAL_MODEL --protocol observed-evidence-v2 --think false
 ```
+
+这里显式选择 `observed-evidence-v2` 协议和 `think=false`，便于记录可重复的配置；`original` 与 `observed-evidence-v1` 仍可显式选择作为历史对照。协议帮助模型表达动作和引用，工具权限与原文检查仍由后端执行，不能因结构化输出而省略审核。
+
+固定 10 题的实际 4B 候选实验中，v2 产生 4 份待审草稿、3 次待补问、2 次拒答和 1 次引文不匹配失败；保留了语义问题。它展示了一条可以继续人工处理的真实路径，不是答案正确率或可靠性证明。完整配置、历史失败与限制见[模型实验](model-experiment.md)。
 
 先确认选定模型确实在本机 Ollama 中，且有足够资源。默认单次模型调用最多 40 秒、2,048 个输出 token；每个调查回合最多 90 秒；一个任务累计最多 8 个决策，补问后不重置决策步数。超时、截断、无效提案都作为失败记录，不偷偷换模型。模型表现以实际运行报告为准，不能由协议测试推断。检索对照见[完整逐题报告](../../data/desk/retrieval-diagnostic.json)。
 
@@ -88,4 +107,4 @@ stateDiagram-v2
 
 ## 下一步交自己的作品
 
-按[四轮学习实验](learning-lab.md)完成独立变化，保存失败与修复证据；再做[牛客线索改写的十二个深挖场景](../interview/deep-dives.md)。使用参考工程可以缩短搭环境时间，简历应写清自己的设计、修改和测量，不能把仓库所有功能都归为个人独立完成。
+按[四轮学习实验](learning-lab.md)完成独立变化。还不知道怎样选题时，从[租户配额迁移任务](tenant-capacity-lab.md)开始：需求、原版反例、交付位置和验收表均已给出，实现由自己完成。然后按[作品证据清单](student-value.md#把独立改动整理成可审查作品)整理材料，再用[牛客线索改写的十二个深挖场景](../interview/deep-dives.md)追问自己的代码。使用参考工程可以缩短搭环境时间，简历应写清自己的设计、修改和测量，不能把仓库所有功能都归为个人独立完成。

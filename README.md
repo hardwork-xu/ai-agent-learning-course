@@ -82,7 +82,7 @@ python scripts/grade.py --submission work/my_answers.py --task transfer --report
 
 课程验收检查实际作品，不预测录用。参考代码的自动检查、真实模型实验和真人试学分别记录；当前没有真人学习效果数据，[试学材料](docs/teaching/pilot.md) 已提供。不要把小型合成评测写成线上指标或模型排名。
 
-已保存[真实本地模型实验](docs/experiments/local-model-run.md)：默认预算截断、待审改写、引用集合评分与完整 HTTP 流程都有逐题证据，可用来练习排错与项目答辩。
+已保存 [CaseDesk 真实模型实验](docs/desk/model-experiment.md)：两种本地权重、四轮协议对照、动态工具链和完整 HTTP 流程都有证据；错误答案与失败题全部保留，可用来练习排错与项目答辩。[基础项目的历史模型实验](docs/experiments/local-model-run.md)另行保留，不混用两代成绩。
 
 ## 内容与维护
 

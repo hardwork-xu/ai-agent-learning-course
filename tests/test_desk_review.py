@@ -2,6 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import sqlite3
+import json
 from contextlib import closing
 import tempfile
 import threading
@@ -10,6 +11,8 @@ import unittest
 
 from agentlab.desk.engine import Engine
 from agentlab.desk.knowledge import KnowledgeStore
+from agentlab.desk.planner import LocalPlanner
+from agentlab.local_model import LocalModel
 from agentlab.desk.store import DeskError, Store
 
 
@@ -127,6 +130,52 @@ class IndependentLifecycleReview(unittest.TestCase):
                 with closing(sqlite3.connect(store.path)) as connection, connection:
                     self.assertEqual(connection.execute("SELECT count(*) FROM tickets").fetchone()[0], 0)
                     self.assertEqual(connection.execute("SELECT count(*) FROM outbox").fetchone()[0], 0)
+
+    def test_observed_alias_keeps_old_revision_and_cannot_bypass_source_recheck(self):
+        # A new retrieval returns an updated document while e1 still names the
+        # previous observation. Translating e1 must never upgrade its authority.
+        store = Store(self.path / "alias-runs.db")
+        knowledge = self.knowledge
+        views = []
+        class Transport(LocalModel):
+            def __init__(self):
+                super().__init__("synthetic-transport", max_output_tokens=2048)
+                self.calls = 0
+            def _request(self, method, path, payload=None, *, timeout=None):
+                if path == "/api/version":
+                    return {"version": "test"}
+                if path == "/api/tags":
+                    return {"models": [{"name": "synthetic-transport", "digest": "sha256:test"}]}
+                self.calls += 1
+                if self.calls == 2:
+                    previous = knowledge.list_documents("demo")[0]
+                    knowledge.ingest(tenant="demo", document_id="policy", title="退款",
+                        content="退款审核需要9个工作日。", source="urn:review:policy", license="MIT",
+                        expected_revision=previous["revision"])
+                if self.calls < 3:
+                    decision = {"type": "tool", "name": "search_knowledge", "arguments": {"query": "退款审核"}}
+                else:
+                    observations = json.loads(payload["messages"][1]["content"])["observations"]
+                    views.extend(observations)
+                    decision = {"type": "finish", "answer": "退款审核需要7个工作日。",
+                                "citations": [{"ref": "e1", "quote": "退款审核需要7个工作日。"}]}
+                return {"model": "synthetic-transport", "done": True,
+                        "message": {"content": json.dumps(decision)}, "prompt_eval_count": 10, "eval_count": 5}
+        transport = Transport()
+        engine = Engine(store, knowledge, planner_factory=lambda: LocalPlanner(
+            "synthetic-transport", transport=transport, protocol="observed-evidence-v1", think=False))
+        run = store.create("demo", "requester", "退款审核期限", "create", mode="local")
+        engine.run_once()
+        result = store.get("demo", run["id"])
+        self.assertEqual([row["result"][0]["ref"] for row in views], ["e1", "e2"])
+        self.assertIn("7个工作日", views[0]["result"][0]["text"])
+        self.assertIn("9个工作日", views[1]["result"][0]["text"])
+        self.assertEqual(result["state"], "failed")
+        self.assertEqual(result["error"], "citation_stale")
+        self.assertEqual(knowledge.search("demo", "退款审核")[0]["text"], "退款审核需要9个工作日。")
+        with closing(sqlite3.connect(store.path)) as connection:
+            self.assertEqual(connection.execute("SELECT count(*) FROM tickets").fetchone()[0], 0)
+            self.assertEqual(connection.execute("SELECT count(*) FROM outbox").fetchone()[0], 0)
 
     def test_cancel_commit_race_has_one_business_outcome(self):
         store = Store(self.path / "runs.db")
