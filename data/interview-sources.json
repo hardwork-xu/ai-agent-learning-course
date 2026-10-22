@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-22",
+  "purpose": "公开面经仅发现准备主题；技术答案以官方资料和仓库行为核查。",
+  "collection_method": "人工搜索、打开正文、选择能支持不同训练主题的页面；不批量爬取、不保存原文或评论。",
+  "sampling_limit": "非随机、非代表性小样本；同一企业与技术社区偏倚明显，可能有重复传播，不能统计高频题或录用概率。",
+  "content_policy": {
+    "original_scenarios": true,
+    "interview_reenactments_claimed": false,
+    "usernames_collected": false,
+    "schools_collected": false,
+    "contacts_collected": false,
+    "salary_collected": false,
+    "paywall_bypassed": false,
+    "license_note": "原帖版权归原作者或权利人；这里只保留来源链接、必要题名和有限原创主题概括，不再许可原文。"
+  },
+  "nowcoder_sources": [
+    {
+      "id": "N01",
+      "platform": "Nowcoder",
+      "title": "字节Agent开发后端 日常实习一面凉面",
+      "url": "https://www.nowcoder.com/discuss/932295617999622144",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "09-24 08:13",
+      "timestamp_kind": "edited",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文以面试刚结束的个人回顾开头，记录项目追问；仅据叙述形式分类。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "切块",
+        "混合检索",
+        "RRF",
+        "评测质量"
+      ],
+      "original_scenarios": [
+        "D01",
+        "D06",
+        "D09"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N02",
+      "platform": "Nowcoder",
+      "title": "字节跳动9.3 Agent开发一面面经",
+      "url": "https://www.nowcoder.com/discuss/925342611194286080",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "09-04 11:04",
+      "timestamp_kind": "edited",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文回顾自己的项目面试问题，未提供可独立验证的面试凭证。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "结构化输出",
+        "工具校验",
+        "长任务延迟",
+        "上下文压缩"
+      ],
+      "original_scenarios": [
+        "D03",
+        "D04",
+        "D08",
+        "D10"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N03",
+      "platform": "Nowcoder",
+      "title": "广州某小厂 Agent后端开发一面",
+      "url": "https://www.nowcoder.com/feed/main/detail/a23d2e7a98ac433a82a41c8108646780?sourceSSR=dynamic",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "06-12 18:12",
+      "timestamp_kind": "edited",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文分阶段叙述个人面试与作业改进，并承认部分追问未记住；企业身份未披露。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "异步工具",
+        "重复触发",
+        "记忆",
+        "现场作业改进"
+      ],
+      "original_scenarios": [
+        "D02",
+        "D03",
+        "D04",
+        "D05",
+        "D07",
+        "D10"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N04",
+      "platform": "Nowcoder",
+      "title": "字节广告团队agent面经（一二面）",
+      "url": "https://www.nowcoder.com/discuss/930870582843805696",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "09-19 17:07",
+      "timestamp_kind": "displayed_publication_or_update",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文以两轮个人面试和被要求演示项目的经历叙述；校招或社招属性未核实。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "运行时设计",
+        "发布流程",
+        "现场演示",
+        "后端基础"
+      ],
+      "original_scenarios": [
+        "D11",
+        "D12"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N05",
+      "platform": "Nowcoder",
+      "title": "字节数据中台Agent全栈面经",
+      "url": "https://www.nowcoder.com/feed/main/detail/fe77496948f74b4091ab4bb6e8156c8b?sourceSSR=post",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "09-21 16:01",
+      "timestamp_kind": "displayed_publication_or_update",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文明确自述首次大厂面试，列出两轮过程；招聘归属未外部核实。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "网络链路",
+        "SSE",
+        "框架边界",
+        "项目深挖"
+      ],
+      "original_scenarios": [
+        "D02",
+        "D05"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N06",
+      "platform": "Nowcoder",
+      "title": "9.15科大讯飞AI应用一面",
+      "url": "https://www.nowcoder.com/feed/main/detail/aece93373f9c47ea95c831aef6471886?sourceSSR=post",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "09-24 10:07",
+      "timestamp_kind": "edited",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "firsthand_self_report_unverified",
+      "classification_basis": "正文以个人面试场景叙述技术追问；标题中的日期不是可核实的完整发表日期。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "尾延迟",
+        "工作流",
+        "持久化",
+        "隔离",
+        "交付"
+      ],
+      "original_scenarios": [
+        "D05",
+        "D08",
+        "D11"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N07",
+      "platform": "Nowcoder",
+      "title": "大模型、Agent面经总结【04/28】腾讯 / 百度 总结",
+      "url": "https://www.nowcoder.com/discuss/878600528970735616",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "04-28 11:24",
+      "timestamp_kind": "displayed_publication_or_update",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "secondary_aggregation",
+      "classification_basis": "页面明确将多个面经整理为摘要并列出原帖链接；未据此确认聚合条目真实性或频率。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_body",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "业务使用",
+        "失败恢复",
+        "知识更新"
+      ],
+      "original_scenarios": [
+        "D07",
+        "D12"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    },
+    {
+      "id": "N08",
+      "platform": "Nowcoder",
+      "title": "字节面经-字节跳动AI Agent开发岗面经-03",
+      "url": "https://www.nowcoder.com/discuss/922659809084571648",
+      "accessed_on": "2026-10-22",
+      "access_date_basis": "client_date",
+      "published_at": null,
+      "publication_year_verified": false,
+      "displayed_timestamp": "08-28 01:20",
+      "timestamp_kind": "displayed_publication_or_update",
+      "date_note": "页面未展示完整年份；已编辑时间不等于初次发表时间，不由访问年份补齐。",
+      "source_class": "commercial_aggregation_public_preview",
+      "classification_basis": "页面聚合多场面试并展示订阅后阅读提示；仅查看公开预览，没有访问或绕过付费部分。",
+      "employer_attribution_verified": false,
+      "interview_occurrence_verified": false,
+      "access_scope": "public_preview_only",
+      "body_access_verified": true,
+      "permitted_use_in_course": "topic_discovery_only",
+      "topics_used": [
+        "方案收益",
+        "记忆",
+        "工具边界"
+      ],
+      "original_scenarios": [
+        "D02"
+      ],
+      "raw_post_archived": false,
+      "verbatim_body_reproduced": false,
+      "personal_metadata_retained": false,
+      "limitations": [
+        "非代表性人工选择样本",
+        "面经自述或聚合并非企业官方题库",
+        "不作频次或招聘状态推断"
+      ]
+    }
+  ],
+  "technical_sources": [
+    {
+      "id": "T01",
+      "title": "Anthropic: Building effective agents",
+      "url": "https://www.anthropic.com/research/building-effective-agents",
+      "accessed_on": "2026-10-22",
+      "published_at": "2024-12-19",
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D02"
+      ],
+      "checked_claim": "工作流与模型动态选择工具的区别；成本与复杂度取舍"
+    },
+    {
+      "id": "T02",
+      "title": "Elastic: Reciprocal rank fusion",
+      "url": "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D01"
+      ],
+      "checked_claim": "按排名融合与 rank_constant/rank_window_size；不把不可比分数直接相加"
+    },
+    {
+      "id": "T03",
+      "title": "JSON Schema: object",
+      "url": "https://json-schema.org/understanding-json-schema/reference/object",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D03"
+      ],
+      "checked_claim": "properties、required、additionalProperties 的分工"
+    },
+    {
+      "id": "T04",
+      "title": "Python 3.13: Coroutines and tasks",
+      "url": "https://docs.python.org/3.13/library/asyncio-task.html#task-cancellation",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D04"
+      ],
+      "checked_claim": "协作式取消、清理与超时；未将取消解释为外部事务回滚"
+    },
+    {
+      "id": "T05",
+      "title": "Python 3.13: Queues",
+      "url": "https://docs.python.org/3.13/library/asyncio-queue.html",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D05"
+      ],
+      "checked_claim": "maxsize=0 为无界，正上限改变队列等待行为"
+    },
+    {
+      "id": "T06",
+      "title": "OWASP: LLM Prompt Injection Prevention",
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D06"
+      ],
+      "checked_claim": "分层防护与人工控制；不以单一检查承诺安全"
+    },
+    {
+      "id": "T07",
+      "title": "AWS: Transactional outbox pattern",
+      "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D07"
+      ],
+      "checked_claim": "本地双写窗口、重复投递与幂等消费"
+    },
+    {
+      "id": "T08",
+      "title": "OpenTelemetry: Traces",
+      "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D08"
+      ],
+      "checked_claim": "span、trace 与上下文传播"
+    },
+    {
+      "id": "T09",
+      "title": "scikit-learn: Common pitfalls",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D09"
+      ],
+      "checked_claim": "不让保留测试信息参与模型或参数选择"
+    },
+    {
+      "id": "T10",
+      "title": "Anthropic: Effective context engineering for AI agents",
+      "url": "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents",
+      "accessed_on": "2026-10-22",
+      "published_at": "2025-09-29",
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D10"
+      ],
+      "checked_claim": "有限上下文、压缩与按需载入；业务状态方案为课程原创"
+    },
+    {
+      "id": "T11",
+      "title": "SQLite: Online Backup API",
+      "url": "https://www.sqlite.org/backup.html",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D11"
+      ],
+      "checked_claim": "受支持的在线备份方法；多系统业务一致性需另行验证"
+    },
+    {
+      "id": "T12",
+      "title": "Docker Engine security",
+      "url": "https://docs.docker.com/engine/security/",
+      "accessed_on": "2026-10-22",
+      "published_at": null,
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D11"
+      ],
+      "checked_claim": "容器隔离配置与 daemon 接口权限边界"
+    },
+    {
+      "id": "T13",
+      "title": "A Proof for the Queuing Formula: L = λW",
+      "url": "https://pubsonline.informs.org/doi/abs/10.1287/opre.9.3.383",
+      "accessed_on": "2026-10-22",
+      "published_at": "1961-06-01",
+      "type": "primary_research_abstract",
+      "supports_scenarios": [
+        "D05"
+      ],
+      "checked_claim": "稳定条件下平均在途数、到达率和停留时间之间的关系；不把均值当容量保证"
+    },
+    {
+      "id": "T14",
+      "title": "AWS: Using load shedding to avoid overload",
+      "url": "https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/",
+      "accessed_on": "2026-10-22",
+      "published_at": "2019-12-05",
+      "type": "official_primary",
+      "supports_scenarios": [
+        "D05"
+      ],
+      "checked_claim": "过载、拒绝与客户端可用性应共同观测，重试可能放大负载"
+    }
+  ],
+  "scenario_contract": {
+    "source_mapping": "N01–N08 支持选题方向，不声称原创问题、答案或业务情境曾在面试发生。",
+    "technical_claims": "T01–T14 为技术核查；基于仓库代码的结论仍需相应执行证据。",
+    "exercise_status": "独立交付列的是学习者验收要求，不能视作已经实现、真人通过或具有商业收入。"
+  }
+}

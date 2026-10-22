@@ -171,3 +171,7 @@ python examples/live_tools.py
 项目 04 已提供中文 BM25 与评测；项目 05 已提供本机身份与审批服务、独立模拟下游及 outbox。它们的具体范围见对应教程。原生工具调用、多任务 Planner 评测、进程隔离和严格任务 deadline 仍属扩展，不能当成已实现。
 
 下一步：[学生提交练习](practice.md) → [中文 RAG](projects/04-chinese-rag.md) → [完整服务](projects/05-service.md) → [综合验收](projects/capstone.md)。旧实验的限制只描述该实验，不代表新服务没有认证或恢复机制。
+
+## CaseDesk 综合工程入口
+
+完成基础代码后，按 [四轮学习实验](desk/learning-lab.md)读新应用：`desk/api.py` 接身份与请求，`desk/store.py` 管任务事务，`desk/engine.py` 驱动调查，`desk/planner.py` 区分固定流程与真实本地模型，`desk/knowledge.py` 管原始文档与版本，`desk/evaluate.py` 保留逐题对照。模型只提出只读动作；审核和提交保留在可信应用层。实际界面入口、依赖和启动步骤见 [CaseDesk](desk/README.md)。

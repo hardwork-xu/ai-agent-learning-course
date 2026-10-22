@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ${{ matrix.os }}
@@ -35,3 +39,33 @@ jobs:
       - run: python -m agentlab demo rag
       - run: python -m agentlab demo workflow
       - run: python -m agentlab evaluate --output work/evaluation.json
+  desk:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-desk.lock
+      - run: python -m pip install -e . --no-deps
+      - run: python -m unittest discover -s tests -p "test_desk*.py" -v
+      - run: python scripts/smoke_desk.py
+      - run: python -m agentlab.desk.evaluate --output work/desk-retrieval.json
+      - run: python -m pip wheel . --no-deps --wheel-dir dist
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: docker compose build
+      - run: docker compose run --rm desk init --data-dir /data --demo
+      - run: docker compose up -d --wait --wait-timeout 60
+      - name: Verify real HTTP and non-root user
+        run: |
+          curl --fail --silent http://127.0.0.1:8766/health
+          test "$(docker compose exec -T desk id -u)" = 10001
+      - if: always()
+        run: docker compose down -v

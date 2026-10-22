@@ -4,7 +4,7 @@
 
 从一个只读工具开始，逐步完成中文知识检索、引用检查、HTTP 身份认证、工单草稿、人工审批和故障恢复。中文解释配合 English technical terms，默认实验无需 API Key。编程零基础读者先走补课路径；算法研究和 AI Infra 另有分流，不把所有 Agent 岗位混为一种。
 
-[从这里开始](docs/start-here.md) · [先修诊断](docs/prerequisites.md) · [动手练习](docs/practice.md) · [学习路线](docs/roadmap.md) · [应用项目](docs/projects/capstone.md) · [面试训练](docs/interview/README.md)
+[从这里开始](docs/start-here.md) · [先修诊断](docs/prerequisites.md) · [动手练习](docs/practice.md) · [学习路线](docs/roadmap.md) · [CaseDesk 工作台](docs/desk/README.md) · [应用项目](docs/projects/capstone.md) · [面试训练](docs/interview/README.md)
 
 ## 选择入口
 
@@ -13,6 +13,7 @@
 | 会写基础 Python，没学过 Agent | [先修诊断与补课](docs/prerequisites.md) | 自己的 JSON、HTTP、SQL 练习通过 |
 | 看得懂示例，还不能自己写 | [引导 → 补全 → 独立迁移](docs/practice.md) | 学生提交检查通过，能解释失败原因 |
 | 已能写工具与状态逻辑 | [中文 RAG](docs/projects/04-chinese-rag.md) → [完整服务](docs/projects/05-service.md) | 跑通证据、草稿、审批、重试、恢复 |
+| 已完成基础服务，准备独立项目 | [CaseDesk 四轮实验](docs/desk/learning-lab.md) | 新场景、故障恢复、受控实验与现场答辩 |
 | 准备投递实习／校招 | [综合项目验收](docs/projects/capstone.md) → [岗位映射](docs/job-readiness.md) | 有独立改动、实测报告、失败分析和答辩记录 |
 
 ## 先观察一个小系统
@@ -70,13 +71,14 @@ python scripts/grade.py --submission work/my_answers.py --task transfer --report
 - **基础实验 01–03**：工具边界、英文词项检索、可信调用方的审批事务，适合看清单个机制。
 - **项目 04**：中文 BM25、资料版本与权限过滤、冲突拒答、逐题评测；可选本地模型生成草稿，结构检查与语义审核分开。
 - **项目 05**：有身份与角色的本机 HTTP 应用，完整草稿／批准／提交链路、持久化、撤权、重放与独立下游恢复。
+- **CaseDesk 综合工程**：带页面的知识与工单工作台，原始 Markdown 导入、版本撤回、多步只读调查、补问、有限后台队列、取消恢复、语义审核和可靠提交；配套部署、评测与独立迁移实验。需要安装可选依赖，见 [启动说明](docs/desk/README.md)。
 - **综合验收**：在参考项目上完成独立业务变化。只有运行参考服务，不能通过应用作品集门槛。
 
 [项目目录](docs/projects/README.md) · [代码导读](docs/code-guide.md) · [验证范围](docs/verification.md) · [作品集清单](docs/templates/portfolio.md)
 
 ## 求职练习
 
-[面试目录](docs/interview/README.md) 包括 60 道 Agent 讨论题、4 道工程编程参考题和 3 场模拟面试；另有 [通用 CS 诊断](docs/interview/cs-foundations.md)、学生提交练习、岗位官网样本和独立项目答辩。数据结构、网络、数据库与操作系统仍需按目标岗位补齐。
+[面试目录](docs/interview/README.md) 包括 60 道 Agent 讨论题、4 道工程编程参考题和 3 场模拟面试；另有 [通用 CS 诊断](docs/interview/cs-foundations.md)、学生提交练习、岗位官网样本和独立项目答辩。新增[牛客来源线索](docs/interview/field-notes.md)与[12 个原创深挖场景](docs/interview/deep-dives.md)，每题连接代码、反例与练习验收。数据结构、网络、数据库与操作系统仍需按目标岗位补齐。
 
 课程验收检查实际作品，不预测录用。参考代码的自动检查、真实模型实验和真人试学分别记录；当前没有真人学习效果数据，[试学材料](docs/teaching/pilot.md) 已提供。不要把小型合成评测写成线上指标或模型排名。
 

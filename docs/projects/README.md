@@ -11,6 +11,7 @@
 | [03 可恢复的审批流程](03-durable-workflow.md) | SQLite 状态、审批绑定、事务幂等、连接重启恢复 | 状态图与故障时间线 |
 | [04 中文 RAG 与模型草稿](04-chinese-rag.md) | 中文 BM25、版本与租户过滤、引用检查、逐题评测、可选本地模型 | 检索对照、错误切片、生成主张审核 |
 | [05 完整应用服务](05-service.md) | 本机 HTTP、角色与资源权限、草稿审批、outbox 和独立下游恢复 | 身份与状态测试、跨进程操作、故障恢复 |
+| [CaseDesk 综合工作台](../desk/README.md) | 页面、资料导入、多步调查、有限队列、取消恢复与语义审核 | 四轮迁移实验、同条件对照和项目答辩 |
 | [综合项目验收](capstone.md) | 参考服务之上的独立变化、模型实验与答辩门槛 | 自己的实现、实测结果、迁移与交付记录 |
 
 资料配套：[评测数据集设计](evaluation-dataset.md) · [三个 ADR 模板与示例](architecture-decisions.md)
@@ -29,7 +30,7 @@ python -m agentlab demo workflow
 python -m unittest discover -s tests -v
 ```
 
-Windows PowerShell 的激活命令是 `.venv\Scripts\Activate.ps1`。包没有第三方运行时依赖；首次安装构建工具可能访问包索引。若只想离线执行源代码，在仓库根目录设置 `PYTHONPATH=src` 后运行；PowerShell 使用 `$env:PYTHONPATH="src"`，POSIX shell 使用 `export PYTHONPATH=src`。
+Windows PowerShell 的激活命令是 `.venv\Scripts\Activate.ps1`。基础包没有第三方运行时依赖；CaseDesk 工作台另需可选 Web 依赖，见其启动说明。首次安装构建工具可能访问包索引。若只想离线执行源代码，在仓库根目录设置 `PYTHONPATH=src` 后运行；PowerShell 使用 `$env:PYTHONPATH="src"`，POSIX shell 使用 `export PYTHONPATH=src`。
 
 ## 能证明什么
 

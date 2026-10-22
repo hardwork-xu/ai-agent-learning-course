@@ -49,3 +49,7 @@ python scripts/grade.py --submission work/my_answers.py --task prerequisites
 4. **迁移**：换一套数据或业务约束，仍能实现并说明设计依据。
 
 读过代码、跟做、独立完成都值得记录，但应分别标注。进入求职项目答辩前，至少完成一个独立变式；小组学习可按[试学与评审方案](teaching/pilot.md)记录所需帮助和卡点。没有真人执行过的方案，不能写成已经证明有效的教学结果。
+
+## 完成基础服务之后
+
+进入 [CaseDesk 综合工作台](desk/README.md)，按 [四轮学习实验](desk/learning-lab.md)完成原始资料、任务恢复、审核与独立迁移；用 [十二个深挖场景](interview/deep-dives.md)检查能否解释自己的改动。先修诊断未通过时，先做本文前面的补课路径。
