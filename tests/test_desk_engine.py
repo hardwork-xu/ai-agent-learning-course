@@ -156,18 +156,45 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(store.get("demo", run["id"])["error"], "deadline_exceeded")
 
     def test_heartbeat_prevents_second_worker_reclaim(self):
-        entered, release = threading.Event(), threading.Event()
+        entered, release, renewed = threading.Event(), threading.Event(), threading.Event()
+        clock = [1000.]
+        store = Store(self.path / "heartbeat.db", clock=lambda: clock[0])
+        original_renew = store.renew
+        def observe_renew(*args, **kwargs):
+            renewal_clock = clock[0]
+            result = original_renew(*args, **kwargs)
+            if renewal_clock == 1000.2:
+                renewed.set()
+            return result
+        store.renew = observe_renew
         class Slow:
             def next(self, *a, **kw):
-                entered.set(); release.wait(2)
+                entered.set(); release.wait(10)
                 return {"type": "abstain", "reason": "缺少材料"}
-        engine = Engine(self.store, self.knowledge, planner_factory=Slow, lease_seconds=.18, timeout_seconds=3)
-        run = self.create(mode="local")
-        worker = threading.Thread(target=engine.run_once)
-        worker.start(); self.assertTrue(entered.wait(1)); time.sleep(.35)
-        self.assertIsNone(self.store.claim())
-        release.set(); worker.join(2)
-        self.assertEqual(self.store.get("demo", run["id"])["state"], "abstained")
+        engine = Engine(store, self.knowledge, planner_factory=Slow, lease_seconds=.3, timeout_seconds=10)
+        run = store.create("demo", "requester", "退款", "heartbeat", mode="local")
+        failures = []
+        def execute():
+            try:
+                engine.run_once()
+            except Exception as error:
+                failures.append(error)
+        worker = threading.Thread(target=execute)
+        worker.start()
+        try:
+            self.assertTrue(entered.wait(5))
+            clock[0] = 1000.2
+            # Observe a real committed heartbeat before advancing beyond the
+            # original lease. Slow CI scheduling must not simulate clock expiry.
+            self.assertTrue(renewed.wait(5))
+            clock[0] = 1000.35
+            self.assertIsNone(store.claim())
+        finally:
+            release.set()
+            worker.join(5)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(failures, [])
+        self.assertEqual(store.get("demo", run["id"])["state"], "abstained")
 
     def test_clarification_version_and_resume(self):
         scripts = iter([Script([{"type": "clarify", "question": "月付还是年付？"}]), Script([search(), finish])])

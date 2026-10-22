@@ -98,29 +98,56 @@ v2 的 8 道标准题中，3 道具有有效引用，7 道有证据标签的题�
 
 ## 怎样复现并继续选型
 
-先启动自己管理的 Ollama，并确认所选模型已安装；脚本不会启动服务或下载模型。将下面的模型名换成实际安装的标签，报告必须使用一个新路径：
+### 首次准备 4B 本地模型
 
-```bash
-python scripts/evaluate_desk_model.py \
-  --model course-qwen3:0.6b-q8_0 \
-  --protocol original --think default \
-  --output work/desk-model-experiment.json
+这一步是可选实验，首次试学可以先完成无需模型的流程。先按 [Ollama 官方安装说明](https://docs.ollama.com/quickstart)安装并启动本机服务，运行 `ollama --version` 和 `ollama list` 检查连接。本次实测版本为 `0.35.1`；使用其他版本时记录实际版本，不假定输出相同。已有桌面后台服务时不用再开第二个 `ollama serve`。
+
+1. 在仓库根目录运行 `python -c "from pathlib import Path; Path('work/models').mkdir(parents=True, exist_ok=True)"`。从 [Qwen 固定版本权重](https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/bc640142c66e1fdd12af0bd68f40445458f3869b/Qwen3-4B-Q4_K_M.gguf)下载，保存为 `work/models/Qwen3-4B-Q4_K_M.gguf`。约 2.5 GB；导入缓存还会占空间，运行时另需内存。不要把网页错误页当成权重文件，也不要加入 Git。
+2. 运行下面的完整文件校验。它逐块读取文件，不把整个模型读入内存；只有大小和 SHA256 都一致才输出通过。失败时先重新检查下载，不继续导入。
+
+```text
+python -c "from pathlib import Path; import hashlib; p=Path('work/models/Qwen3-4B-Q4_K_M.gguf'); f=p.open('rb'); h=hashlib.file_digest(f,'sha256').hexdigest(); f.close(); assert p.stat().st_size==2497280256 and h=='7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5', 'weight verification failed'; print('PASS: exact Qwen3-4B Q4_K_M weights')"
 ```
 
-另外三个配置分别使用新报告路径：
+3. 用编辑器在同一目录创建 UTF-8 文本文件 `work/models/Modelfile`，文件名不带 `.txt`，内容只有：
+
+```text
+FROM ./Qwen3-4B-Q4_K_M.gguf
+PARAMETER num_ctx 4096
+```
+
+4. 按[官方 GGUF 导入方法](https://docs.ollama.com/import)执行以下命令。如果本机已有同名但来源不同的模型，改用一个新的本地标签，并同步替换后续所有 `--model` 值，不覆盖原模型。
+
+```text
+ollama create casedesk-qwen3:4b-q4km -f work/models/Modelfile
+ollama list
+```
+
+`casedesk-qwen3:4b-q4km` 是这次本地导入的名字；直接 `ollama pull` 这个名字不能取得课程权重。看到列表中的标签后再运行下面的评测，评测会记录并固定 daemon 报告的模型 digest。权重摘要证明下载内容，daemon digest 是运行时身份记录，两者不是同一个摘要。关闭云功能、仅使用本机地址的设置见 [Ollama FAQ](https://docs.ollama.com/faq)；本次实验的完整设置见[来源清单](../../data/desk/model-provenance.json)。
+
+以下命令写成单行，适用于 macOS/Linux 终端与 Windows PowerShell；Windows 的 `python` 按[入口说明](README.md)替换为虚拟环境解释器。模型下载或导入尚未完成时，保持模型实验“未运行”，继续离线任务即可。
+
+### 运行并保留逐题报告
+
+完成上面的 4B 导入后，先运行当前 v2 候选。确认自己管理的 Ollama 已启动；脚本不会启动服务或下载模型。改过标签时替换 `--model`，报告必须使用一个新路径：
 
 ```bash
-python scripts/evaluate_desk_model.py \
-  --model casedesk-qwen3:4b-q4km --protocol original --think default \
-  --output work/desk-4b-original.json
+python scripts/evaluate_desk_model.py --model casedesk-qwen3:4b-q4km --protocol observed-evidence-v2 --think false --output work/desk-4b-v2.json
+```
 
-python scripts/evaluate_desk_model.py \
-  --model casedesk-qwen3:4b-q4km --protocol observed-evidence-v1 --think false \
-  --output work/desk-4b-v1.json
+需要研究协议差异时，再运行同一 4B 权重的历史配置，分别使用新报告路径：
 
-python scripts/evaluate_desk_model.py \
-  --model casedesk-qwen3:4b-q4km --protocol observed-evidence-v2 --think false \
-  --output work/desk-4b-v2.json
+```bash
+python scripts/evaluate_desk_model.py --model casedesk-qwen3:4b-q4km --protocol original --think default --output work/desk-4b-original.json
+
+python scripts/evaluate_desk_model.py --model casedesk-qwen3:4b-q4km --protocol observed-evidence-v1 --think false --output work/desk-4b-v1.json
+
+```
+
+0.6B 原始对照仅在另外完成[历史权重导入](../experiments/local-model-run.md)后执行：
+
+```text
+python scripts/evaluate_desk_model.py --model course-qwen3:0.6b-q8_0 --protocol original --think default --output work/desk-model-experiment.json
 ```
 
 本地标签是显式选定的实验别名，不是 Ollama 官方注册名。权重下载、完整 SHA256 验证、导入和服务启动由操作者完成，应用不会自动执行这些操作。`think` 使用 Ollama 原生布尔参数，接口依据为 [Ollama 0.35.1 API 文档](https://github.com/ollama/ollama/blob/v0.35.1/docs/api.md)。
@@ -128,9 +155,7 @@ python scripts/evaluate_desk_model.py \
 已安装模型并启动本机 Ollama 后，可另行复现真实 HTTP 闭环。下面的脚本会启动临时 API 服务、使用合成账号模拟审核与提交，并在结束时停止自己启动的 API；它不会停止操作者原有的 Ollama：
 
 ```bash
-python scripts/smoke_desk.py \
-  --model casedesk-qwen3:4b-q4km \
-  --protocol observed-evidence-v2 --think false
+python scripts/smoke_desk.py --model casedesk-qwen3:4b-q4km --protocol observed-evidence-v2 --think false
 ```
 
 模拟批准只检查工作流衔接，不计为真人语义评分。省略 `--model` 时该脚本采用固定基线，不能把那种结果当作模型实验。

@@ -49,6 +49,8 @@ python scripts/grade.py --submission exercises/starter.py
 
 检索逐题报告见 [CaseDesk 诊断](../data/desk/retrieval-diagnostic.json)，运行步骤与数据性质见[工作台入口](desk/README.md)。第一次模型候选及后续实验分别留存，不能把失败报告覆盖成最终成功样例。Windows CI 曾暴露中文文件未指定 UTF-8 的读取错误，已修复；新增反例的 SQLite 连接也显式关闭，避免临时目录清理失败。当前仍没有真人试学、支付或就业结果；[学生价值验收](desk/student-value.md)区分交付基础与真实需求证据。
 
+另一轮 Windows CI 暴露了 180 毫秒租约测试对机器调度速度的依赖。续租测试现使用可控的业务时钟，等实际后台线程完成 SQLite 续租后，再推进到超过初始租约的时点，验证第二个 worker 仍不能认领；失败路径也会释放并等待线程结束。它验证续租与排他认领，不把 CI 机器的调度延迟当作生产租约保证。实际部署的 15 秒租约仍可能因进程长时间停顿而失效，旧 worker 的写入由 fence 拦截。
+
 ## 2026-10-05：0.2.0 本地验证
 
 本轮在 Python 3.12 环境执行，使用当前源码：
