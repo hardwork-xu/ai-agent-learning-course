@@ -1,0 +1,8 @@
+{
+  "provenance": "Original synthetic operational examples; all IDs and dates are invented.",
+  "cases": [
+    {"tenant":"campus","case_id":"CASE-1001","category":"refund","status":"approved","approved_at":"2026-10-01","payment_channel":"original_card","as_of":"2026-10-02","calendar_region":null,"policy_query":"退款审核通过 原支付银行卡 到账时限 工作日 支付流水号 升级"},
+    {"tenant":"campus","case_id":"CASE-1002","category":"subscription","status":"cancellation_requested","plan":null,"as_of":"2026-10-02","policy_query":"订阅取消 月付 年付 未使用部分 按天折算 人工确认"},
+    {"tenant":"partner","case_id":"CASE-2001","category":"refund","status":"reviewing","submitted_at":"2026-10-01","payment_channel":"wallet","as_of":"2026-10-02","policy_query":"退款申请材料齐全 审核7个工作日 到账1个工作日"}
+  ]
+}

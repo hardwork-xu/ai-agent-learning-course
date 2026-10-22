@@ -1,0 +1,17 @@
+services:
+  desk:
+    build: .
+    ports:
+      - "127.0.0.1:8766:8766"
+    volumes:
+      - desk-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 10s
+volumes:
+  desk-data:

@@ -1,0 +1,112 @@
+{
+  "status": "passed",
+  "http": "real_uvicorn_loopback",
+  "planner": "actual_local_model",
+  "model": "casedesk-qwen3:4b-q4km",
+  "protocol": "observed-evidence-v2",
+  "think": "false",
+  "reviewer": "simulated_test_actor",
+  "question": "CASE-1001 退款目前处于什么阶段？根据支付渠道，批准后预计还需多久到账？不要猜精确日期。",
+  "draft_answer": "退款目前处于已批准阶段，根据支付渠道为原支付银行卡，退款审核通过后预计需要2个工作日到账。请注意，周末和适用地区节假日不计入工作日，且没有地区日历时，不会给出精确的自然日期。",
+  "citations": [
+    {
+      "id": "5bd7db5d0a9ad39d9ddc6c58b39db6168b3f2b42c2df86275f73de59c2cd1ee3",
+      "quote": "原支付银行卡 original_card 在退款审核通过后，预计2个工作日到账。起点是 approved_at，不是申请创建时间。周末和适用地区节假日不计入工作日；没有地区日历时，不给出精确的自然日期。",
+      "revision": "d1baa0ff7addce1cd693681f82acb0983f745dda7ac71edd2205c62cda502507"
+    }
+  ],
+  "tool_sequence": [
+    "lookup_case",
+    "search_knowledge"
+  ],
+  "model_attempts": [
+    {
+      "usage": {
+        "eval_count": 23,
+        "eval_duration": 577273000,
+        "load_duration": 1496209,
+        "max_output_tokens": 2048,
+        "model_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+        "prompt_eval_cached_count": 402,
+        "prompt_eval_count": 413,
+        "prompt_eval_duration": 163851000,
+        "reported_model": "casedesk-qwen3:4b-q4km",
+        "requested_model": "casedesk-qwen3:4b-q4km",
+        "server_version": "0.35.1",
+        "timeout_seconds": 40,
+        "total_duration": 915058042
+      },
+      "latency_ms": 922.612,
+      "error": null
+    },
+    {
+      "usage": {
+        "eval_count": 39,
+        "eval_duration": 959841000,
+        "load_duration": 825792,
+        "max_output_tokens": 2048,
+        "model_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+        "prompt_eval_cached_count": 402,
+        "prompt_eval_count": 560,
+        "prompt_eval_duration": 438468000,
+        "reported_model": "casedesk-qwen3:4b-q4km",
+        "requested_model": "casedesk-qwen3:4b-q4km",
+        "server_version": "0.35.1",
+        "timeout_seconds": 40,
+        "total_duration": 1413185750
+      },
+      "latency_ms": 1415.585,
+      "error": null
+    },
+    {
+      "usage": {
+        "eval_count": 127,
+        "eval_duration": 3249662000,
+        "load_duration": 832625,
+        "max_output_tokens": 2048,
+        "model_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+        "prompt_eval_cached_count": 549,
+        "prompt_eval_count": 1341,
+        "prompt_eval_duration": 2145150000,
+        "reported_model": "casedesk-qwen3:4b-q4km",
+        "requested_model": "casedesk-qwen3:4b-q4km",
+        "server_version": "0.35.1",
+        "timeout_seconds": 40,
+        "total_duration": 5413514208
+      },
+      "latency_ms": 5416.072,
+      "error": null
+    }
+  ],
+  "local_tickets": 1,
+  "downstream_effects": 1,
+  "recovered_lost_receipt": true,
+  "model_calls": 3,
+  "human_outcome_verified": false,
+  "answer_correctness": null,
+  "server_stopped": true,
+  "generated_at": "2026-10-22T16:49:08.663828+00:00",
+  "dataset_kind": "original synthetic course records; no customer or learner data",
+  "verification_scope": "Real model HTTP workflow with a simulated reviewer; no independent semantic score or learner outcome",
+  "source_sha256": {
+    "scripts/smoke_desk.py": "d730a782100159e2577c29b736f358a7351a6efcfcf6909b44e853c4d7c73c45",
+    "src/agentlab/desk/__main__.py": "1da011ca3dc1a0a80551a8175465663cd3d835972090fea43155048ba028bd3e",
+    "src/agentlab/desk/api.py": "9a12292192f008a0472947429fc47b692a49b694ced66f5597aaa381ff1affba",
+    "src/agentlab/desk/cases.json": "d44e3942caf45544eafeeef7295f640269fcc241660653885d3cec642fae8416",
+    "src/agentlab/desk/documents/account-access.md": "301367ef356ea4b26590cd097c470fe71c7901081ac89807990d6947ff74ec27",
+    "src/agentlab/desk/documents/archived-campaign.md": "73aa1fecfb30197d84cdb89f52c906d17cdfc9ec1b191d8858fabfb64d3abc71",
+    "src/agentlab/desk/documents/delivery-operations.md": "1ac9442a8ba570099a656de6a4dda70153d3a22510b5912771c8c3d38a06f595",
+    "src/agentlab/desk/documents/escalation-handbook.md": "17a01c93a2b4ce641425f1dad5232b0e0ca9c187cb59e2772ae6c2521702b388",
+    "src/agentlab/desk/documents/manifest.json": "1f53605352fbad10525a36b88a558fb9913734150a3cd37b3ccf5e788f8c6bde",
+    "src/agentlab/desk/documents/payment-settlement.md": "5b08e8edcba9e021fdb6a73725ef9bbf003814b10d0eaf5efef611e89ad3b751",
+    "src/agentlab/desk/documents/refund-policy.md": "cc1d0aeddcfae3ed5f7ea0f0d0d81ebad81c7915351d866e48eb71edf8af51a2",
+    "src/agentlab/desk/documents/subscription-billing.md": "f371da157298b9730142f14d516de4b808de7a72eab0dce8b6d5625e664fe080",
+    "src/agentlab/desk/documents/tasks.json": "a62a9a17b05f5e0347420aeb87fdc275a54a6bbaee6c5ca48b1aaa899c314dcc",
+    "src/agentlab/desk/documents/untrusted-case-note.md": "350254f28b164ef0b5a97acb6981c19c0ebdb4358a399188641191fc7c4693b6",
+    "src/agentlab/desk/engine.py": "d8cd704e17c27b7ad787533fabc93a53766ba8f38d59b681630f677ca8cd4906",
+    "src/agentlab/desk/knowledge.py": "1f7d85377e078aeccc03f08558932442785a97126a8cb5c53b5a65c522c659fc",
+    "src/agentlab/desk/planner.py": "4213949d5d203c31f1274e591e68f2118ccbebfdcf22f30eca616d15525e083d",
+    "src/agentlab/desk/store.py": "0e80e94de089ee72a6161eca570c9477dd4e7b1356e40725b95d10d6eb33abde",
+    "src/agentlab/local_model.py": "b54bb42f11e6e0f0ef5d5e65af36dde51389b66ea26788822e676cc86b69af59"
+  }
+}

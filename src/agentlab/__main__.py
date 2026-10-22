@@ -7,13 +7,17 @@ from pathlib import Path
 import tempfile
 
 from .evaluation import evaluate
+from .console import configure_utf8_output
+from .quality import assess_refund_sum
 from .retrieval import demo_retriever
 from .runtime import Finish, Runtime, ScriptedPlanner, ToolCall, demo_tools
 from .workflow import TicketWorkflow, WorkflowError
 
 
 def tools_demo(*, live: bool = False) -> dict:
-    task = "Read the synthetic refund policy and add 12 plus 8. Explain the sum and the approval requirement."
+    task = ('Read the synthetic refund policy and add 12 plus 8. Final answer must be a JSON object '
+            'with exactly sum (number), approval_required (boolean), action_performed (boolean). '
+            'A final answer is assessed separately from loop termination; do not claim an unperformed effect.')
     if live:
         from .live import ClaudePlanner
         planner = ClaudePlanner.from_environment()
@@ -22,11 +26,11 @@ def tools_demo(*, live: bool = False) -> dict:
         planner = ScriptedPlanner([
             ToolCall("lookup_policy", {"policy": "refund"}),
             ToolCall("add_numbers", {"a": 12, "b": 8}),
-            Finish("12 + 8 = 20。合成退款政策要求审核人批准；本次只读取政策并计算，没有创建退款。"),
+            Finish('{"sum":20,"approval_required":true,"action_performed":false}'),
         ])
         mode = "scripted_test_double"
-    result = Runtime(demo_tools(), max_steps=6).run(task, planner)
-    return {"mode": mode, **asdict(result)}
+    result = Runtime(demo_tools(), max_steps=6).run(task, planner, evaluator=assess_refund_sum)
+    return {"mode": mode, **asdict(result), "model_calls": getattr(planner, "calls", [])}
 
 
 def rag_demo() -> dict:
@@ -63,6 +67,7 @@ def workflow_demo() -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description="Offline learning labs; live calls require an explicit flag.")
     commands = parser.add_subparsers(dest="command", required=True)
     demo = commands.add_parser("demo")
@@ -83,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(serialized + "\n", encoding="utf-8")
         print(serialized)
-        return 1 if result.get("status") == "failed" else 0
+        return 1 if result.get("status") == "failed" or result.get("task_success") is False else 0
     except (ValueError, OSError) as exc:
         # Avoid embedding untrusted paths, headers, responses or secret values in errors.
         print(json.dumps({"status": "failed", "error": type(exc).__name__,

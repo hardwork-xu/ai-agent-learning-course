@@ -4,16 +4,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-learning-lab"
-version = "0.1.0"
-description = "Inspectable, offline-first exercises for tool agents, retrieval and approval workflows"
+version = "0.3.0"
+description = "Agent application course with a durable evidence and review workbench"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+desk = ["fastapi==0.159.1", "uvicorn==0.54.0"]
+desk-test = ["httpx==0.28.1"]
+
 [project.scripts]
 agentlab = "agentlab.__main__:main"
+casedesk = "agentlab.desk.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 agentlab = ["fixtures/*.json"]
+"agentlab.desk" = ["web/*.html", "web/*.css", "web/*.js", "documents/*.md", "documents/*.json", "cases.json"]

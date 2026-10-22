@@ -1,0 +1,185 @@
+{
+  "measured_on": "2026-10-05",
+  "command": "python -m agentlab.rag_eval --output work/zh-evaluation.json",
+  "kind": "visible_synthetic_chinese_rag_regression",
+  "configuration": {
+    "mode": "extractive",
+    "model": null,
+    "generator": "extractive",
+    "split": "test",
+    "repeats": 1,
+    "as_of": "2026-10-01",
+    "min_coverage": 0.32,
+    "retrieval": "BM25 k1=1.2 b=0.75, Chinese bigrams + ASCII words, declared rewrites",
+    "query_rewrites": [
+      [
+        "找回密码",
+        "密码重置"
+      ],
+      [
+        "忘记密码",
+        "密码重置"
+      ],
+      [
+        "退钱",
+        "退款"
+      ],
+      [
+        "多长时间",
+        "期限"
+      ],
+      [
+        "多久",
+        "期限"
+      ],
+      [
+        "几天",
+        "期限"
+      ],
+      [
+        "工作日",
+        "工作日"
+      ],
+      [
+        "多因素认证",
+        "双重验证"
+      ]
+    ],
+    "stop_bigrams": [
+      "一下",
+      "为什",
+      "什么",
+      "可以",
+      "多少",
+      "如何",
+      "怎么",
+      "是否",
+      "的是",
+      "请问",
+      "需要"
+    ],
+    "top_k": 3,
+    "timeout_seconds_per_call": 20,
+    "max_output_tokens": 384,
+    "max_model_calls": 40,
+    "max_total_seconds": 180
+  },
+  "configuration_sha256": "c50151f162b4d9ea0b4340865e72e955e96ba151bfcf1dcc7b42dc70d59c1904",
+  "dataset_sha256": "04bd156f938cee2f4d3f8a7dfecfcc2e7c4a5f1b17fb5020bb622d095a1202eb",
+  "corpus_sha256": "7e20a2b1f0e653efd965d22344c8f964fde32c32253da8e0dea57193a81b4c00",
+  "implementation_sha256": "389db42be85a8705de32b943e2503c81de70bd6aa3864c7452ba5e84457c2bf5",
+  "dataset_counts": {
+    "dev": 12,
+    "test": 30
+  },
+  "model_calls_attempted": 0,
+  "baseline_metrics": {
+    "decision_accuracy": {
+      "numerator": 28,
+      "denominator": 30,
+      "value": 0.9333333333333333
+    },
+    "answer_coverage": {
+      "numerator": 23,
+      "denominator": 30,
+      "value": 0.7666666666666667
+    },
+    "answerable_recall": {
+      "numerator": 21,
+      "denominator": 21,
+      "value": 1.0
+    },
+    "abstention_recall_unanswerable": {
+      "numerator": 7,
+      "denominator": 9,
+      "value": 0.7777777777777778
+    },
+    "relevant_answer_precision": {
+      "numerator": 21,
+      "denominator": 23,
+      "value": 0.9130434782608695
+    },
+    "exact_quote_integrity_answered": {
+      "numerator": 23,
+      "denominator": 23,
+      "value": 1.0
+    },
+    "human_review_required": {
+      "numerator": 0,
+      "denominator": 30,
+      "value": 0.0
+    },
+    "operational_failures": {
+      "numerator": 0,
+      "denominator": 30,
+      "value": 0.0
+    }
+  },
+  "candidate_metrics": {
+    "decision_accuracy": {
+      "numerator": 29,
+      "denominator": 30,
+      "value": 0.9666666666666667
+    },
+    "answer_coverage": {
+      "numerator": 22,
+      "denominator": 30,
+      "value": 0.7333333333333333
+    },
+    "answerable_recall": {
+      "numerator": 21,
+      "denominator": 21,
+      "value": 1.0
+    },
+    "abstention_recall_unanswerable": {
+      "numerator": 8,
+      "denominator": 9,
+      "value": 0.8888888888888888
+    },
+    "relevant_answer_precision": {
+      "numerator": 21,
+      "denominator": 22,
+      "value": 0.9545454545454546
+    },
+    "exact_quote_integrity_answered": {
+      "numerator": 22,
+      "denominator": 22,
+      "value": 1.0
+    },
+    "human_review_required": {
+      "numerator": 0,
+      "denominator": 30,
+      "value": 0.0
+    },
+    "operational_failures": {
+      "numerator": 0,
+      "denominator": 30,
+      "value": 0.0
+    }
+  },
+  "candidate_failures": [
+    {
+      "id": "zh-041",
+      "query": "校园商店自提点的地图坐标是什么？",
+      "expected_ids": [],
+      "returned_answer": "校园商店自提点在工作日的九点至十七点开放，节假日关闭。",
+      "returned_citations": [
+        {
+          "id": "pickup-hours",
+          "revision": "2026-09",
+          "quote": "校园商店自提点在工作日的九点至十七点开放，节假日关闭。"
+        }
+      ],
+      "reason": "extractive_answer"
+    }
+  ],
+  "limitations": [
+    "全部问题和答案均公开且人工编写；这是回归检查，不是独立泛化测试。",
+    "基线与候选使用同一 BM25；基线覆盖率阈值为 0，候选使用配置阈值。",
+    "来源引用真实不代表回答切题；地图坐标题是保留的词法检索反例。",
+    "exact_quote_integrity 只检验可见资料原文，不评估生成改写的语义蕴含。",
+    "生成草稿的语义支持需人工复核；待复核和运行错误不计作答对。",
+    "固定 as_of 用于复现实验，实际业务必须传入所需日期并更新资料。",
+    "time/byte/token 预算限制客户端；已提交的服务器推理可能继续消耗资源。"
+  ]
+}

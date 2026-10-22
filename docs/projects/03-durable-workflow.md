@@ -84,7 +84,7 @@ python -m unittest discover -s tests -p 'test_workflow.py' -v
 
 ## 从本地事务到真实服务
 
-**尚未实现：** 真实登录与角色、远程审批页面、HTTP API、队列 worker、部署、多副本调度、外部工单系统和 outbox。
+**本基础实验范围之外：** 登录与角色、HTTP API、远程审批页面、队列 worker、多副本调度与外部工单系统。下一阶段 [项目 05](05-service.md) 已接入本地 bearer 角色、HTTP、outbox 和独立模拟下游；没有宣称提供互联网身份系统、多副本调度或真实外部工单集成。
 
 外部工单创建无法与本地 SQLite 事务自然形成同一个原子提交。建议扩展时把待执行动作与 outbox 同事务写入，由 worker 使用稳定的下游幂等键执行；必要时查询下游状态和对账。不能在数据库事务中简单包一个 HTTP 调用，就宣称两边恰好一次。
 

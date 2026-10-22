@@ -1,0 +1,113 @@
+{
+  "kind": "casedesk_local_model_provenance",
+  "experiment_date": "2026-10-23",
+  "inputs": "original public synthetic policies, questions and operational records only",
+  "models": [
+    {
+      "tag": "course-qwen3:0.6b-q8_0",
+      "ollama_digest": "03b681e337f70e7d44ef27719410aa95b5f387a6b533cb6c22a1298dbd223e4f",
+      "weights": {
+        "repository": "Qwen/Qwen3-0.6B-GGUF",
+        "commit": "23749fefcc72300e3a2ad315e1317431b06b590a",
+        "file": "Qwen3-0.6B-Q8_0.gguf",
+        "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+        "size": 639446688,
+        "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/23749fefcc72300e3a2ad315e1317431b06b590a/Qwen3-0.6B-Q8_0.gguf",
+        "license": "apache-2.0"
+      },
+      "full_weight_sha256_verified": true
+    },
+    {
+      "tag": "casedesk-qwen3:4b-q4km",
+      "ollama_digest": "4c99326606b51df49287d10a1d2679326dc3310694a5a795e419911933833ea2",
+      "weights": {
+        "repository": "Qwen/Qwen3-4B-GGUF",
+        "commit": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+        "file": "Qwen3-4B-Q4_K_M.gguf",
+        "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+        "size": 2497280256,
+        "url": "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/bc640142c66e1fdd12af0bd68f40445458f3869b/Qwen3-4B-Q4_K_M.gguf",
+        "license": "apache-2.0"
+      },
+      "full_weight_sha256_verified": true
+    }
+  ],
+  "runtime": {
+    "ollama_version": "0.35.1",
+    "bind_host": "127.0.0.1:11434",
+    "cloud_disabled": true,
+    "num_parallel": 1,
+    "max_loaded_models": 1,
+    "context_length": 4096,
+    "keep_alive": "2m",
+    "automatic_download_by_application": false,
+    "paid_api_calls": 0,
+    "thinking_text_saved": false,
+    "cleanup": {
+      "task_owned_daemon_stopped": true,
+      "loopback_port_11434_closed_after_stop": true,
+      "method": "SIGINT to the exact task-owned server process, followed by a failed TCP connection on its loopback port"
+    }
+  },
+  "reports": [
+    {
+      "file": "model-run.json",
+      "sha256": "af16810a3d079ae9f5db1f8c6e7974e4ca915ddb5775f73f1d5f273d30655df1",
+      "configuration_sha256": "e790edcbdb6eaa5ceab42972001d959800b2068523574019c3b7fae5d76863a9",
+      "implementation_bundle_sha256": "1f8dd378a8a0196166f057216b3ac303b2cb8b9a40104d192bbca43e3b081929",
+      "dataset_sha256": "19e64312a0b406ad092b6ca465d3aaf93e17f6fef4ddcc7064f9be094b3d5edd",
+      "operational_tasks_sha256": "5f509d47a87d933392e47b80db8d0e85ed95a4e79b3ea7f6c3237d9ed5b4a588",
+      "model": "course-qwen3:0.6b-q8_0",
+      "protocol": "original",
+      "think": "default",
+      "run_status": "runtime_failures_observed"
+    },
+    {
+      "file": "model-run-4b-original.json",
+      "sha256": "b878ca33011580bbbd9988bf150c81484294f2c29a715f93a8e93c91eb5429a4",
+      "configuration_sha256": "f40ba534fcb6192e58da3f39e3b152f12efe705ad9a07882f614d0a168852fc3",
+      "implementation_bundle_sha256": "1f8dd378a8a0196166f057216b3ac303b2cb8b9a40104d192bbca43e3b081929",
+      "dataset_sha256": "19e64312a0b406ad092b6ca465d3aaf93e17f6fef4ddcc7064f9be094b3d5edd",
+      "operational_tasks_sha256": "5f509d47a87d933392e47b80db8d0e85ed95a4e79b3ea7f6c3237d9ed5b4a588",
+      "model": "casedesk-qwen3:4b-q4km",
+      "protocol": "original",
+      "think": "default",
+      "run_status": "runtime_failures_observed"
+    },
+    {
+      "file": "model-run-4b-observed-v1.json",
+      "sha256": "8158bde4a234c9d6854b8413df1e3d55f573de922d2f7c86134acc163def06d7",
+      "configuration_sha256": "74073384688dbe876440525d5d8a7b50266095e7b97ea8fec100de68df141dda",
+      "implementation_bundle_sha256": "29b92e82b1c8588ad37acf71d6d124e5abb63605d846647a0fe223419b184cc2",
+      "dataset_sha256": "19e64312a0b406ad092b6ca465d3aaf93e17f6fef4ddcc7064f9be094b3d5edd",
+      "operational_tasks_sha256": "5f509d47a87d933392e47b80db8d0e85ed95a4e79b3ea7f6c3237d9ed5b4a588",
+      "model": "casedesk-qwen3:4b-q4km",
+      "protocol": "observed-evidence-v1",
+      "think": "false",
+      "run_status": "runtime_failures_observed"
+    },
+    {
+      "file": "model-run-4b-observed-v2.json",
+      "sha256": "d581835b7343378908a69a80ffc1b80d5cf5af41abda51e0c992bbbb7d8e1ed2",
+      "configuration_sha256": "9370df824444c546516348ff071c46a3174d011b266632bdfcb182ac5e26f917",
+      "implementation_bundle_sha256": "fb9a8e00a4bef5da64e2c1b0d5c68f7303f38f422b3f1d9243945f528c34a820",
+      "dataset_sha256": "19e64312a0b406ad092b6ca465d3aaf93e17f6fef4ddcc7064f9be094b3d5edd",
+      "operational_tasks_sha256": "5f509d47a87d933392e47b80db8d0e85ed95a4e79b3ea7f6c3237d9ed5b4a588",
+      "model": "casedesk-qwen3:4b-q4km",
+      "protocol": "observed-evidence-v2",
+      "think": "false",
+      "run_status": "runtime_failures_observed"
+    }
+  ],
+  "reproducibility": {
+    "original_source_commit": "1481730332506f10bebf2c1b1f39c4174c7a1161",
+    "v1_source_patch": "protocol-history/observed-evidence-v1.patch",
+    "v2_source": "Published implementation; per-file SHA256 recorded in its report",
+    "limitation": "Daemon digest is metadata attestation. Output token counters do not separate internal thinking. No human semantic score or business outcome was measured."
+  },
+  "integration": {
+    "file": "model-http-smoke.json",
+    "sha256": "34eb3485825b5b90c0e6bfe62986a90dc490b5bc089e4338769200a8a23f873e",
+    "scope": "Real local model HTTP workflow, synthetic inputs, simulated reviewer, one local ticket and one deduplicated downstream effect; no human semantic score"
+  }
+}

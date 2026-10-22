@@ -1,0 +1,64 @@
+{
+  "kind": "original_synthetic_support_documents",
+  "license": "MIT",
+  "authorship": "Course Contributors",
+  "notice": "全部资料为本课程原创合成业务材料，无真实客户数据；不是实际商家政策。",
+  "documents": [
+    {
+      "id": "refund-policy",
+      "title": "退款受理与审核手册",
+      "file": "refund-policy.md",
+      "source": "urn:casedesk:demo:refund-policy",
+      "withdrawn": false
+    },
+    {
+      "id": "payment-settlement",
+      "title": "支付通道结算与进度排查",
+      "file": "payment-settlement.md",
+      "source": "urn:casedesk:demo:payment-settlement",
+      "withdrawn": false
+    },
+    {
+      "id": "account-access",
+      "title": "账号恢复与组织权限操作指南",
+      "file": "account-access.md",
+      "source": "urn:casedesk:demo:account-access",
+      "withdrawn": false
+    },
+    {
+      "id": "subscription-billing",
+      "title": "订阅取消、账单与发票说明",
+      "file": "subscription-billing.md",
+      "source": "urn:casedesk:demo:subscription-billing",
+      "withdrawn": false
+    },
+    {
+      "id": "delivery-operations",
+      "title": "数据导出交付与延迟处理指南",
+      "file": "delivery-operations.md",
+      "source": "urn:casedesk:demo:delivery-operations",
+      "withdrawn": false
+    },
+    {
+      "id": "escalation-handbook",
+      "title": "支持事件升级与交接手册",
+      "file": "escalation-handbook.md",
+      "source": "urn:casedesk:demo:escalation-handbook",
+      "withdrawn": false
+    },
+    {
+      "id": "archived-campaign",
+      "title": "已撤回的春季试点活动说明",
+      "file": "archived-campaign.md",
+      "source": "urn:casedesk:demo:archived-campaign",
+      "withdrawn": true
+    },
+    {
+      "id": "untrusted-case-note",
+      "title": "原始客户留言：退款排查样本",
+      "file": "untrusted-case-note.md",
+      "source": "urn:casedesk:demo:untrusted-case-note",
+      "withdrawn": false
+    }
+  ]
+}

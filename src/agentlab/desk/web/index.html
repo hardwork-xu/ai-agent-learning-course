@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CaseDesk · 知识与工单协作台</title>
+<link rel="stylesheet" href="/assets/style.css"><script src="/assets/app.js" defer></script>
+</head>
+<body>
+<header><a class="brand" href="/">Case<span>Desk</span></a><span class="subtitle">知识与工单协作台</span><div id="identity">尚未连接</div><button id="disconnect" hidden>断开连接</button></header>
+<main>
+<section id="login" class="intro">
+<div><p class="eyebrow">从问题到已审核的答复</p><h1>让每次处理，<br>都有依据。</h1><p class="lead">集中查找资料、整理支持请求、核对答复与来源。保留每一步处理记录，让同事接手时知道进展和下一步。</p><ul class="features"><li>按团队隔离的版本化知识库</li><li>可补充信息、取消和恢复的任务</li><li>先审核答复，再提交工单</li></ul></div>
+<form id="connect-form" class="card"><h2>连接工作区</h2><label for="credential">访问凭据</label><input id="credential" type="password" autocomplete="off" spellcheck="false" required placeholder="粘贴管理员分配的访问凭据"><p class="muted">凭据仅保存在当前页面内存，刷新或断开连接后清除。请使用自己的申请人或审核人凭据。</p><button class="primary" type="submit">进入工作台 <span aria-hidden="true">→</span></button><p class="muted small">本地演示：先按项目说明初始化示例资料与角色。</p></form>
+</section>
+<section id="workspace" hidden>
+<nav aria-label="工作台"><button data-tab="tasks" class="selected">处理任务</button><button data-tab="knowledge">知识库</button><button data-tab="metrics">运行概况</button><button id="refresh">刷新</button></nav>
+<section id="tasks" class="tab">
+<div class="work-grid"><aside>
+<form id="task-form" class="card"><p class="eyebrow">新支持请求</p><h2>需要处理什么？</h2><label for="question">问题与已知信息</label><textarea id="question" rows="5" maxlength="4000" required placeholder="例如：CASE-1001 的退款请求需要哪些处理步骤？"></textarea><label for="mode">处理方式</label><select id="mode"><option value="baseline">直接检索</option><option value="local">模型协作</option></select><p id="mode-note" class="muted small">直接检索用于快速定位资料；模型协作可根据已有结果继续查找信息。两种方式都需要审核。</p><button class="primary" type="submit">创建任务</button></form>
+<div class="section-heading"><h2>最近任务</h2><span id="run-count"></span></div><div id="run-list" class="run-list"></div>
+</aside><article id="detail" class="card detail"><div class="empty"><p class="eyebrow">工作记录</p><h2>选择一个任务开始</h2><p>在这里查看处理状态、答复、引用来源与审核记录。</p></div></article></div>
+</section>
+<section id="knowledge" class="tab" hidden><div class="section-heading"><div><p class="eyebrow">团队资料</p><h1>让答案有据可查</h1></div><span id="document-count"></span></div><p class="muted">资料更新或撤回后，旧版本不能继续作为新审核与提交的依据。</p><div id="document-list" class="document-grid"></div><form id="document-form" class="card" hidden><h2>发布或更新资料</h2><div class="two-columns"><label>资料编号<input name="document_id" required maxlength="80" pattern="[A-Za-z0-9_-]+" placeholder="refund-policy"></label><label>标题<input name="title" required maxlength="200"></label><label>来源说明<input name="source" required maxlength="500" placeholder="团队维护的服务政策"></label><label>使用许可<input name="license" required maxlength="128" placeholder="原创资料，经授权用于本工作区"></label></div><label>原版本标识（新资料留空）<input name="expected_revision" maxlength="128" autocomplete="off"></label><label>正文<textarea name="content" rows="12" required maxlength="100000" placeholder="支持纯文本与 Markdown 标题；请保留完整适用条件。"></textarea></label><button class="primary">发布资料</button></form></section>
+<section id="metrics" class="tab" hidden><p class="eyebrow">运行概况</p><h1>分别看完成、待审与失败</h1><p class="muted">系统处理完成不代表答复正确。质量与业务收益还需要单独核验。</p><div id="metric-cards" class="metric-grid"></div><details class="card"><summary>查看完整统计</summary><pre id="metrics-json"></pre></details></section>
+</section>
+<div id="message" role="status" aria-live="polite" hidden></div>
+</main><footer>CaseDesk · 资料、答复与操作始终留有版本记录</footer>
+</body></html>

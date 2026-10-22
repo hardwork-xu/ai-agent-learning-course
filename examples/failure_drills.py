@@ -3,10 +3,12 @@
 import json
 
 from agentlab.runtime import Runtime, ScriptedPlanner, ToolCall, demo_tools
+from agentlab.console import configure_utf8_output
 from agentlab.workflow import TicketWorkflow, WorkflowError
 
 
 def main():
+    configure_utf8_output()
     drills = {}
     for name, call in (
         ("unknown_tool", ToolCall("approve_refund", {})),
